@@ -46,10 +46,11 @@ return [
     */
 
     'numhub' => [
-        'api_url' => env('NUMHUB_API_URL', 'https://api.numhub.com'),
+        'base_url' => env('NUMHUB_API_URL', 'https://api.numhub.com/v1'),
         'api_key' => env('NUMHUB_API_KEY'),
         'api_secret' => env('NUMHUB_API_SECRET'),
         'webhook_secret' => env('NUMHUB_WEBHOOK_SECRET'),
+        'use_mock' => env('NUMHUB_USE_MOCK', true), // Set to false when credentials available
     ],
 
     /*
