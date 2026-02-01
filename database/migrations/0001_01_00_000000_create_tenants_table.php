@@ -21,21 +21,10 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        // Add tenant_id to users table
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('tenant_id')->nullable()->after('id')->constrained()->nullOnDelete();
-            $table->string('role')->default('member')->after('password'); // owner, admin, member
-        });
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['tenant_id']);
-            $table->dropColumn(['tenant_id', 'role']);
-        });
-        
         Schema::dropIfExists('tenants');
     }
 };

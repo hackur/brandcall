@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('stripe_usage_record_id')->nullable();
             $table->boolean('synced_to_stripe')->default(false);
             $table->timestamps();
-            
+
             $table->unique(['tenant_id', 'year', 'month']);
         });
     }

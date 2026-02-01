@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('processed_at')->nullable();
             $table->text('processing_error')->nullable();
             $table->timestamps();
-            
+
             $table->index(['source', 'event_type', 'created_at']);
         });
     }
