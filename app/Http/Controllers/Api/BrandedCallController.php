@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\VoiceProvider;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\CallLog;
-use App\Services\VoiceProviderFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 class BrandedCallController extends Controller
 {
     public function __construct(
-        private VoiceProviderFactory $voiceProvider
+        private VoiceProvider $voiceProvider
     ) {}
 
     /**
@@ -110,13 +110,13 @@ class BrandedCallController extends Controller
             ],
         ]);
 
-        // Initiate call via voice provider (NumHub or Telnyx)
-        $result = $this->voiceProvider->initiateCall(
+        // Initiate call via voice provider (Telnyx, NumHub, etc.)
+        $result = $this->voiceProvider->call(
             $brand,
             $request->input('from'),
             $request->input('to'),
             $request->input('call_reason'),
-            $request->input('metadata', [])
+            ['metadata' => $request->input('metadata', [])]
         );
 
         if (! $result['success']) {

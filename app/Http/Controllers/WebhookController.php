@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Facades\Voice;
 use App\Models\Brand;
 use App\Models\CallLog;
 use App\Models\WebhookLog;
-use App\Services\NumHubService;
-use App\Services\TelnyxService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,11 +19,6 @@ use Illuminate\Support\Facades\Log;
  */
 class WebhookController extends Controller
 {
-    public function __construct(
-        private NumHubService $numHubService,
-        private TelnyxService $telnyxService
-    ) {}
-
     /**
      * Handle NumHub webhooks.
      *
@@ -46,7 +40,7 @@ class WebhookController extends Controller
         ]);
 
         // Verify signature
-        if (! $this->numHubService->verifyWebhookSignature($payload, $signature)) {
+        if (! Voice::driver('numhub')->verifyWebhook($payload, $signature)) {
             Log::warning('NumHub webhook signature verification failed', [
                 'webhook_log_id' => $webhookLog->id,
             ]);
@@ -310,7 +304,7 @@ class WebhookController extends Controller
         ]);
 
         // Verify signature (skip in mock mode)
-        if (! $this->telnyxService->verifyWebhookSignature($payload, $signature, $timestamp)) {
+        if (! Voice::driver('telnyx')->verifyWebhook($payload, $signature, ['telnyx-timestamp' => $timestamp])) {
             Log::warning('Telnyx webhook signature verification failed', [
                 'webhook_log_id' => $webhookLog->id,
             ]);
