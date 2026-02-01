@@ -64,7 +64,7 @@ class CallLog extends Model
         static::addGlobalScope(new TenantScope);
 
         static::creating(function (CallLog $log) {
-            if (!$log->tenant_id && app()->bound('current_tenant')) {
+            if (! $log->tenant_id && app()->bound('current_tenant')) {
                 $log->tenant_id = app('current_tenant')->id;
             }
         });

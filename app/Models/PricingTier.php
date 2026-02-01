@@ -46,6 +46,7 @@ class PricingTier extends Model
     public static function getPriceForCallCount(int $callCount): float
     {
         $tier = static::getTierForCallCount($callCount);
+
         return $tier ? (float) $tier->price_per_call : 0.0750; // Default to highest tier
     }
 }

@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
         'name',
         'email',
         'password',
         'tenant_id',
-        'role',
     ];
 
     protected $hidden = [
@@ -37,13 +39,31 @@ class User extends Authenticatable
         return $this->belongsTo(Tenant::class);
     }
 
-    public function isOwner(): bool
+    /**
+     * Determine if the user can access the Filament admin panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === 'owner';
+        if ($panel->getId() === 'admin') {
+            return $this->hasRole('super-admin');
+        }
+
+        return true;
     }
 
-    public function isAdmin(): bool
+    /**
+     * Check if user is tenant owner.
+     */
+    public function isOwner(): bool
     {
-        return in_array($this->role, ['owner', 'admin']);
+        return $this->hasRole('owner');
+    }
+
+    /**
+     * Check if user has admin capabilities for their tenant.
+     */
+    public function isTenantAdmin(): bool
+    {
+        return $this->hasAnyRole(['owner', 'admin']);
     }
 }
