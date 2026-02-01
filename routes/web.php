@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,6 +16,15 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
+
+/*
+|--------------------------------------------------------------------------
+| Landing Pages (Dynamic, slug-based)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/lp/{slug}', [LandingPageController::class, 'show'])->name('landing-page.show');
+Route::post('/lp/{slug}/lead', [LandingPageController::class, 'submitLead'])->name('landing-page.lead');
 
 /*
 |--------------------------------------------------------------------------
