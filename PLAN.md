@@ -380,11 +380,13 @@ brandcall/
 ## Implementation Phases
 
 ### Phase 1: Foundation (Week 1)
-- [ ] Laravel project setup with Inertia + React
-- [ ] PostgreSQL database + migrations
-- [ ] Authentication (Breeze)
-- [ ] Tenant model + TenantScope
-- [ ] Brand CRUD (no NumHub yet)
+- [x] Laravel project setup with Inertia + React + TypeScript
+- [x] SQLite database + migrations (switch to PostgreSQL for prod)
+- [x] Authentication (Breeze)
+- [x] Tenant model + TenantScope
+- [x] All models created (Tenant, Brand, BrandPhoneNumber, CallLog, UsageRecord, PricingTier)
+- [x] Pricing tiers seeded
+- [ ] Brand CRUD UI
 - [ ] Logo upload to S3
 - [ ] Basic dashboard
 
