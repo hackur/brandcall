@@ -93,4 +93,34 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Telnyx
+    |--------------------------------------------------------------------------
+    |
+    | Alternative voice provider with STIR/SHAKEN and CNAM support.
+    | Very cheap: $0.002/min starting.
+    | Sign up at https://telnyx.com
+    |
+    */
+
+    'telnyx' => [
+        'api_key' => env('TELNYX_API_KEY'),
+        'connection_id' => env('TELNYX_CONNECTION_ID'),
+        'public_key' => env('TELNYX_PUBLIC_KEY'), // For webhook verification
+        'use_mock' => env('TELNYX_USE_MOCK', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Voice Provider Selection
+    |--------------------------------------------------------------------------
+    |
+    | Choose which voice provider to use for branded calls.
+    | Options: numhub, telnyx
+    |
+    */
+
+    'voice_provider' => env('VOICE_PROVIDER', 'telnyx'),
+
 ];

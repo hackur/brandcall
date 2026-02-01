@@ -50,4 +50,5 @@ Route::prefix('v1')->group(function () {
 
 Route::prefix('webhooks')->withoutMiddleware(['throttle:api'])->group(function () {
     Route::post('/numhub', [WebhookController::class, 'numhub'])->name('webhooks.numhub');
+    Route::post('/telnyx', [WebhookController::class, 'telnyx'])->name('webhooks.telnyx');
 });
