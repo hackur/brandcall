@@ -1,280 +1,267 @@
-# BrandCall TODO & Roadmap
+# BrandCall TODO
 
-> Last Updated: 2026-02-01
-> Status: Phase 1 Complete, Awaiting NumHub API Credentials
+## Priority 1: KYC & Compliance
 
----
+### Document Requirements
+- [x] Business License upload
+- [x] Tax ID / EIN document
+- [x] Letter of Authorization (LOA)
+- [ ] **Driver's License / Government ID** (for authorized signatory)
+- [ ] Articles of Incorporation / Business Registration
+- [ ] Utility bill or bank statement (address verification)
+- [ ] W-9 form (for US businesses)
 
-## Current State Summary
-
-### ✅ Completed (Phase 1: Foundation)
-- Laravel 12 + Inertia.js + React 19 + TypeScript
-- Multi-tenant architecture with TenantScope
-- Spatie Permission RBAC (super-admin, owner, admin, member)
-- Filament 3 admin panel (Tenants, Brands, Users, Phone Numbers)
-- Customer dashboard (React/Inertia pages)
-- All models: Tenant, Brand, BrandPhoneNumber, CallLog, UsageRecord, PricingTier
-- Database migrations + seeders
-- Code quality tools (Pint, Larastan Level 6)
-- Smoke tests (20 page tests)
-- Comprehensive documentation (11 docs)
-- Test users configured
-
-### 🚧 Blocker
-- **NumHub API credentials** — Cannot proceed with call integration until obtained
-- Alternative: Consider Twilio Branded Calling or Numeracle as backup
+### KYC Process
+- [x] Document upload system
+- [x] Document status tracking (pending/approved/rejected)
+- [ ] Admin review interface in Filament
+- [ ] Document expiry tracking & renewal reminders
+- [ ] Audit log for all KYC actions
+- [ ] KYC rejection reasons & resubmission flow
+- [ ] Automated document verification (future: OCR/AI)
 
 ---
 
-## Phase 2: NumHub Integration (NEXT)
+## Priority 2: Core Branding API
 
-**Estimated: 1 week after API access**
+### Call Flow
+```
+Client Request → BrandCall API → Supplier/Driver → Branded Call
+     ↓                                    ↓
+  Bill +$0.03                        Cost -$0.01
+     ↓                                    ↓
+  Stripe Usage                      Track in DB
+```
 
-### Core Integration
-- [ ] `app/Services/NumHubService.php` — API client class
-  - [ ] Authentication (API key, OAuth, or JWT)
-  - [ ] Error handling + retry logic
-  - [ ] Rate limiting
-  - [ ] Logging all API calls
+### API Endpoints
+- [ ] `POST /api/v1/calls/brand` - Request branded call
+- [ ] `GET /api/v1/calls/{id}` - Get call status
+- [ ] `GET /api/v1/calls` - List calls (paginated)
+- [ ] `POST /api/v1/brands/{id}/verify` - Verify brand/number
+- [ ] Webhook endpoints for supplier callbacks
 
-### Brand Registration
-- [ ] `RegisterBrandWithNumHub` job (queued)
-- [ ] Upload logo to S3, pass URL to NumHub
-- [ ] Store `numhub_enterprise_id` on Brand model
-- [ ] Handle vetting status (pending → approved/rejected)
+### Supplier Integration
+- [ ] Voice provider interface (TwilioDriver exists)
+- [ ] NumHub integration (waiting on API credentials)
+- [ ] Telnyx integration
+- [ ] Cost tracking per call (-$0.01 per branded call)
+- [ ] Supplier health monitoring
+- [ ] Failover between suppliers
 
-### Phone Number Registration
-- [ ] Register numbers for STIR/SHAKEN attestation
-- [ ] LOA verification workflow
-- [ ] CNAM registration
-- [ ] Attestation level assignment (A/B/C)
-
-### Call Initiation API
-- [ ] `POST /api/v1/brands/{slug}/calls` endpoint
-- [ ] Validate brand ownership + number ownership
-- [ ] Calculate tier pricing
-- [ ] Log call as "initiated"
-- [ ] Send to NumHub with RCD payload
-- [ ] Return call_id + status
-
-### Webhooks
-- [ ] `POST /webhooks/numhub` endpoint
-- [ ] Verify webhook signature
-- [ ] Handle events:
-  - [ ] `enterprise.approved`
-  - [ ] `enterprise.rejected`
-  - [ ] `call.initiated`
-  - [ ] `call.answered`
-  - [ ] `call.completed`
-  - [ ] `call.failed`
-- [ ] Update CallLog status in real-time
-- [ ] Webhook retry handling
+### Rate Limiting & Quotas
+- [ ] Per-tenant rate limits
+- [ ] Monthly call quotas by plan
+- [ ] Overage handling
 
 ---
 
-## Phase 3: Usage Tracking & Billing
+## Priority 3: Stripe Billing
 
-**Estimated: 1 week**
+### Usage-Based Billing
+- [ ] Stripe Usage Records API integration
+- [ ] Metered billing for calls (+$0.03 per branded call)
+- [ ] Usage aggregation (hourly/daily)
+- [ ] Invoice line items for call usage
 
-### Usage Tracking
-- [ ] `UsageTrackingService.php`
-- [ ] Increment call counts on successful calls
-- [ ] Monthly usage aggregation
-- [ ] Tier price calculation (volume-based)
+### Subscription Plans
+- [ ] Free tier (100 calls/month)
+- [ ] Starter ($49/mo - 1,000 calls)
+- [ ] Growth ($199/mo - 10,000 calls)
+- [ ] Enterprise (custom pricing)
+- [ ] Plan upgrade/downgrade flow
 
-### Stripe Integration
-- [ ] Create Stripe customers on tenant signup
-- [ ] Metered billing subscription setup
-- [ ] `SyncUsageToStripe` job (runs hourly)
-- [ ] Invoice generation
-- [ ] Handle failed payments
-- [ ] Webhook handling for payment events
-
-### Billing UI
-- [ ] `/billing` page — current usage, tier, projected cost
+### Billing Dashboard
+- [ ] Current usage display
+- [ ] Billing history
 - [ ] Payment method management
-- [ ] Invoice history + downloads
-- [ ] Upgrade/downgrade subscription
+- [ ] Invoice downloads
+- [ ] Usage alerts (80%, 100% of quota)
 
 ---
 
-## Phase 4: Analytics Dashboard
+## Priority 4: Dashboard & Analytics
 
-**Estimated: 1-2 weeks**
-
-### Metrics Collection
-- [ ] Answer rate calculation
-- [ ] Call duration statistics
-- [ ] Peak hours analysis
-- [ ] Geographic distribution
-- [ ] Per-brand/per-number breakdown
-
-### Dashboard UI
-- [ ] Call volume chart (Chart.js or Recharts)
-- [ ] Answer rate trend
-- [ ] Top performing brands
-- [ ] Recent calls table
-- [ ] Real-time call activity (optional)
-
-### Reports
+### Call Tracking
+- [ ] Real-time call log
+- [ ] Call status (pending, completed, failed)
+- [ ] Cost/revenue per call
+- [ ] Daily/weekly/monthly summaries
 - [ ] Export to CSV/Excel
-- [ ] Scheduled email reports (weekly/monthly)
-- [ ] Custom date range filtering
 
----
-
-## Phase 5: Polish & Enterprise Features
-
-**Estimated: 2 weeks**
-
-### Security & Compliance
-- [ ] Two-factor authentication (2FA)
-- [ ] SSO/SAML integration
-- [ ] Comprehensive audit logs
-- [ ] API key rotation
-- [ ] Rate limiting per API key
-
-### API Documentation
-- [ ] Interactive API docs page
-- [ ] Code examples (cURL, Node, Python, PHP)
-- [ ] Postman collection
-- [ ] SDK generation (OpenAPI spec)
-
-### Enterprise Features
-- [ ] Custom SLAs
-- [ ] White-label support
-- [ ] Dedicated support channel
-- [ ] Custom integrations
-
-### Landing Page Enhancements
-- [ ] Customer testimonials
-- [ ] Case studies
-- [ ] ROI calculator
-- [ ] Live demo scheduling
-
----
-
-## Backlog (Future Versions)
-
-### v1.1 — Enhanced Calling
-- [ ] Batch call initiation API
-- [ ] Call scheduling
-- [ ] Dynamic call reason per call
-- [ ] Call recording integration
-- [ ] IVR support
-
-### v1.2 — Integrations
-- [ ] Salesforce integration
-- [ ] HubSpot integration
-- [ ] Zapier connector
-- [ ] Make.com connector
-- [ ] Custom webhook templates
-
-### v1.3 — Advanced Analytics
-- [ ] Campaign management
+### Analytics
+- [ ] Answer rate by brand
+- [ ] Answer rate by time of day
+- [ ] Geographic breakdown
+- [ ] Carrier-specific metrics
 - [ ] A/B testing for call reasons
-- [ ] AI-powered insights
-- [ ] Anomaly detection
-- [ ] Competitor benchmarking
 
-### v1.4 — SMS/A2P 10DLC
-- [ ] A2P 10DLC registration
-- [ ] Branded SMS support
-- [ ] SMS + Voice unified platform
-
-### v1.5 — Mobile SDKs
-- [ ] iOS SDK
-- [ ] Android SDK
-- [ ] React Native SDK
+### Brand Management
+- [x] Create brand
+- [x] Logo upload
+- [ ] Multiple phone numbers per brand
+- [ ] Call reason templates
+- [ ] Brand performance metrics
 
 ---
 
-## Provider Evaluation (If NumHub Doesn't Work Out)
+## Priority 5: Admin Panel (Filament)
 
-Based on NUMHUB-ALTERNATIVES.md analysis:
+### User Management
+- [ ] View all users
+- [ ] User status (pending/verified/approved/suspended)
+- [ ] Manual KYC approval workflow
+- [ ] Impersonation for support
 
-| Provider | Best For | API Quality | Pricing |
-|----------|----------|-------------|---------|
-| **Twilio Branded Calling** | Developer-first, quick start | Excellent | Per-call |
-| **Numeracle** | Multi-carrier aggregation | Good | Subscription |
-| **Plivo** | Cost-effective alternative | Good | Per-call |
-| **Sinch** | Global reach | Good | Per-call |
+### Tenant Management
+- [ ] View all tenants
+- [ ] Tenant billing status
+- [ ] Usage overview
+- [ ] Manual adjustments
 
-**Recommendation**: If NumHub delays, prototype with Twilio Branded Calling (GA Jan 2025) for fastest time-to-market.
+### KYC Review
+- [ ] Document review queue
+- [ ] Approve/reject with notes
+- [ ] Request additional documents
+- [ ] Audit trail
+
+### System Health
+- [ ] Supplier status
+- [ ] API error rates
+- [ ] Queue health (Horizon)
+- [ ] Database metrics (Pulse)
 
 ---
 
-## Commands Reference
+## Priority 6: Email & Notifications
 
-```bash
-# Development
-composer dev          # Start all dev servers
+### Transactional Emails
+- [x] Email verification
+- [ ] Welcome email after approval
+- [ ] KYC status updates
+- [ ] Password reset
+- [ ] Usage alerts
+- [ ] Invoice notifications
 
-# Quality
-composer lint         # Fix code style
-composer analyse      # Static analysis
-composer quality      # Both lint:check + analyse
-composer smoke        # Run smoke tests
-composer test         # Run all tests
+### Email Provider
+- [ ] Resend setup (DNS records needed)
+- [ ] Email templates
+- [ ] Unsubscribe handling
 
-# Database
-php artisan migrate:fresh --seed
+---
 
-# Test Users
-# admin@brandcall.io (super-admin) — password
-# owner@example.com (owner) — password
+## Priority 7: Security & Compliance
+
+### API Security
+- [ ] API key management
+- [ ] Request signing
+- [ ] IP allowlisting option
+- [ ] Webhook signature verification
+
+### Compliance
+- [ ] STIR/SHAKEN attestation tracking
+- [ ] TCPA compliance logging
+- [ ] Call consent tracking
+- [ ] Data retention policies
+- [ ] GDPR/CCPA handling
+
+### Audit
+- [x] Activity logging (Spatie)
+- [ ] Admin action audit trail
+- [ ] API request logging
+- [ ] Compliance reports
+
+---
+
+## Priority 8: Infrastructure
+
+### Deployment
+- [x] Deployer zero-downtime deploys
+- [x] GitHub Actions CI/CD
+- [x] Redis installed
+- [ ] Horizon supervisor setup
+- [ ] Queue workers for async jobs
+- [ ] Backup automation (Spatie Backup)
+
+### Monitoring
+- [x] Pulse dashboard
+- [x] Telescope for debugging
+- [ ] Health checks for dependencies
+- [ ] Uptime monitoring
+- [ ] Error alerting (Sentry?)
+
+### Performance
+- [ ] Response caching
+- [ ] Database query optimization
+- [ ] CDN for assets
+- [ ] Load testing
+
+---
+
+## Blocked / Waiting
+
+| Item | Waiting On |
+|------|------------|
+| NumHub integration | API credentials |
+| Resend email setup | DNS records from Jeremy |
+| Stripe billing | Stripe API keys in .env |
+| Voice provider testing | NumHub/Twilio credentials |
+
+---
+
+## Completed ✅
+
+- [x] Landing page with hero carousel
+- [x] Multi-step registration flow
+- [x] Email normalization (mixed-case accepted)
+- [x] Font picker system (7 combos)
+- [x] Deployer CI/CD setup
+- [x] Onboarding dashboard
+- [x] Company profile form
+- [x] Document upload system
+- [x] Support ticket system
+- [x] Documentation page
+- [x] Account settings
+- [x] Redis installed on server
+- [x] TwilioDriver created
+- [x] Laravel Cashier installed
+- [x] Design system (Tailwind)
+
+---
+
+## Notes
+
+### Pricing Model
+- **Cost per call:** $0.01 (paid to supplier)
+- **Revenue per call:** $0.03 (billed to client)
+- **Margin:** $0.02 per call (66% gross margin)
+
+### Stripe Usage API
+```php
+// Record usage after each branded call
+$subscription->reportUsage(
+    quantity: 1,
+    timestamp: now(),
+);
+
+// Or use Stripe's Meter API for real-time
+Stripe\Billing\MeterEvent::create([
+    'event_name' => 'branded_call',
+    'payload' => [
+        'stripe_customer_id' => $tenant->stripe_id,
+        'value' => 1,
+    ],
+]);
 ```
 
----
-
-## Files to Create (Phase 2)
-
-```
-app/
-├── Services/
-│   └── NumHubService.php           # NumHub API client
-├── Jobs/
-│   ├── RegisterBrandWithNumHub.php
-│   ├── ProcessCallWebhook.php
-│   └── SyncUsageToStripe.php
-├── Http/Controllers/
-│   ├── Api/BrandedCallController.php
-│   └── WebhookController.php
-└── Events/
-    ├── CallInitiated.php
-    ├── CallCompleted.php
-    └── CallFailed.php
-
-routes/
-└── api.php                         # API routes
-
-config/
-└── services.php                    # NumHub config
-```
-
----
-
-## Decision Log
-
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-01-31 | Spatie Permission for RBAC | Community standard, well-maintained |
-| 2026-01-31 | Filament 3 for admin | Modern, rapid development |
-| 2026-01-31 | TenantScope pattern | Simple row-level security |
-| 2026-01-31 | Per-brand API keys | Granular security, easier rotation |
-| 2026-01-31 | NumHub as primary provider | Aggregated carrier access |
-| 2026-02-01 | Twilio as backup | If NumHub credentials delayed |
-
----
-
-## Next Immediate Actions
-
-1. **Get NumHub API credentials** — Contact sales or sign up
-2. **If delayed**: Prototype with Twilio Branded Calling
-3. **Create NumHubService.php** — Start with mock responses
-4. **Build call initiation endpoint** — `/api/v1/brands/{slug}/calls`
-5. **Add webhook handling** — For call status updates
-
----
-
-*This document is the single source of truth for BrandCall development priorities.*
+### Call Flow Sequence
+1. Client sends POST /api/v1/calls/brand
+2. Validate API key & rate limits
+3. Check tenant has active subscription
+4. Queue job: SendBrandedCallJob
+5. Job calls supplier API (NumHub/Twilio)
+6. Supplier returns call ID
+7. Record cost in call_logs
+8. Report usage to Stripe
+9. Return call ID to client
+10. Webhook receives call completion
+11. Update call status in DB

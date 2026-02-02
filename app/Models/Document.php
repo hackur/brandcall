@@ -14,6 +14,11 @@ class Document extends Model
     public const TYPE_BUSINESS_LICENSE = 'business_license';
     public const TYPE_TAX_ID = 'tax_id';
     public const TYPE_LOA = 'loa'; // Letter of Authorization
+    public const TYPE_DRIVERS_LICENSE = 'drivers_license';
+    public const TYPE_GOVERNMENT_ID = 'government_id';
+    public const TYPE_ARTICLES_OF_INCORPORATION = 'articles_incorporation';
+    public const TYPE_UTILITY_BILL = 'utility_bill';
+    public const TYPE_W9 = 'w9';
     public const TYPE_OTHER = 'other';
 
     public const STATUS_PENDING = 'pending';
@@ -80,8 +85,29 @@ class Document extends Model
             self::TYPE_BUSINESS_LICENSE => 'Business License',
             self::TYPE_TAX_ID => 'Tax ID / EIN',
             self::TYPE_LOA => 'Letter of Authorization',
+            self::TYPE_DRIVERS_LICENSE => 'Driver\'s License',
+            self::TYPE_GOVERNMENT_ID => 'Government ID',
+            self::TYPE_ARTICLES_OF_INCORPORATION => 'Articles of Incorporation',
+            self::TYPE_UTILITY_BILL => 'Utility Bill / Bank Statement',
+            self::TYPE_W9 => 'W-9 Form',
             self::TYPE_OTHER => 'Other',
             default => $type,
         };
+    }
+
+    public static function getAllTypes(): array
+    {
+        return [
+            ['value' => self::TYPE_BUSINESS_LICENSE, 'label' => 'Business License'],
+            ['value' => self::TYPE_TAX_ID, 'label' => 'Tax ID / EIN Document'],
+            ['value' => self::TYPE_DRIVERS_LICENSE, 'label' => 'Driver\'s License'],
+            ['value' => self::TYPE_GOVERNMENT_ID, 'label' => 'Government ID (Passport, State ID)'],
+            ['value' => self::TYPE_LOA, 'label' => 'Letter of Authorization'],
+            ['value' => self::TYPE_ARTICLES_OF_INCORPORATION, 'label' => 'Articles of Incorporation'],
+            ['value' => self::TYPE_UTILITY_BILL, 'label' => 'Utility Bill / Bank Statement'],
+            ['value' => self::TYPE_W9, 'label' => 'W-9 Form'],
+            ['value' => self::TYPE_KYC, 'label' => 'Other KYC Document'],
+            ['value' => self::TYPE_OTHER, 'label' => 'Other'],
+        ];
     }
 }

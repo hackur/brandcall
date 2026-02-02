@@ -98,34 +98,74 @@ export default function Documents({ documents, documentTypes }: Props) {
                 <div className="card mb-8 bg-brand-600/5 border-brand-500/20">
                     <h3 className="font-semibold text-white mb-3">Required Documents</h3>
                     <p className="text-slate-400 text-sm mb-4">
-                        To complete KYC verification, please upload at least one of the following:
+                        To complete KYC verification, please upload the following:
                     </p>
-                    <ul className="grid md:grid-cols-2 gap-2 text-sm text-slate-300">
-                        <li className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Business License
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Tax ID / EIN Document
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Letter of Authorization (LOA)
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Other KYC Document
-                        </li>
-                    </ul>
+                    
+                    <div className="mb-4">
+                        <h4 className="text-sm font-medium text-white mb-2">Business Verification (at least one)</h4>
+                        <ul className="grid md:grid-cols-2 gap-2 text-sm text-slate-300">
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Business License
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Tax ID / EIN Document
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Articles of Incorporation
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div className="mb-4">
+                        <h4 className="text-sm font-medium text-white mb-2">Identity Verification (required)</h4>
+                        <ul className="grid md:grid-cols-2 gap-2 text-sm text-slate-300">
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Driver's License
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Government ID (Passport, State ID)
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 className="text-sm font-medium text-white mb-2">Additional (if applicable)</h4>
+                        <ul className="grid md:grid-cols-2 gap-2 text-sm text-slate-300">
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Letter of Authorization (LOA)
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                W-9 Form (US businesses)
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Utility Bill (address verification)
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 {/* Documents List */}

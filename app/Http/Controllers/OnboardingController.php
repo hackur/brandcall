@@ -97,13 +97,7 @@ class OnboardingController extends Controller
 
         return Inertia::render('Onboarding/Documents', [
             'documents' => $user->documents()->latest()->get(),
-            'documentTypes' => [
-                ['value' => 'business_license', 'label' => 'Business License'],
-                ['value' => 'tax_id', 'label' => 'Tax ID / EIN Document'],
-                ['value' => 'loa', 'label' => 'Letter of Authorization'],
-                ['value' => 'kyc', 'label' => 'KYC Document'],
-                ['value' => 'other', 'label' => 'Other'],
-            ],
+            'documentTypes' => Document::getAllTypes(),
         ]);
     }
 
@@ -112,9 +106,22 @@ class OnboardingController extends Controller
      */
     public function uploadDocument(Request $request): RedirectResponse
     {
+        $validTypes = implode(',', [
+            Document::TYPE_BUSINESS_LICENSE,
+            Document::TYPE_TAX_ID,
+            Document::TYPE_LOA,
+            Document::TYPE_DRIVERS_LICENSE,
+            Document::TYPE_GOVERNMENT_ID,
+            Document::TYPE_ARTICLES_OF_INCORPORATION,
+            Document::TYPE_UTILITY_BILL,
+            Document::TYPE_W9,
+            Document::TYPE_KYC,
+            Document::TYPE_OTHER,
+        ]);
+
         $validated = $request->validate([
             'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
-            'type' => 'required|string|in:business_license,tax_id,loa,kyc,other',
+            'type' => "required|string|in:{$validTypes}",
             'name' => 'required|string|max:255',
         ]);
 
