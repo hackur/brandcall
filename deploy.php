@@ -51,6 +51,13 @@ add('shared_dirs', [
 add('writable_dirs', [
     'bootstrap/cache',
     'storage',
+    'storage/app',
+    'storage/app/public',
+    'storage/framework',
+    'storage/framework/cache',
+    'storage/framework/sessions',
+    'storage/framework/views',
+    'storage/logs',
 ]);
 
 // Keep 5 releases for rollback
@@ -61,6 +68,11 @@ set('writable_use_sudo', false);
 
 // HTTP user
 set('http_user', 'www-data');
+
+// Writable mode - use chmod
+set('writable_mode', 'chmod');
+set('writable_chmod_mode', '0775');
+set('writable_chmod_recursive', true);
 
 // Hosts
 host('production')
@@ -107,10 +119,42 @@ task('artisan:queue:restart', function () {
     run('{{bin/php}} artisan queue:restart || true');
 });
 
-// Fix permissions
+// Ensure shared storage directories exist with proper structure
+task('deploy:storage:setup', function () {
+    $sharedPath = '{{deploy_path}}/shared';
+    
+    // Create all required storage directories
+    $dirs = [
+        'storage/app',
+        'storage/app/public',
+        'storage/framework',
+        'storage/framework/cache',
+        'storage/framework/cache/data',
+        'storage/framework/sessions',
+        'storage/framework/testing',
+        'storage/framework/views',
+        'storage/logs',
+    ];
+    
+    foreach ($dirs as $dir) {
+        run("mkdir -p {$sharedPath}/{$dir}");
+    }
+    
+    // Create .gitignore files to prevent git issues
+    run("echo '*\n!.gitignore' > {$sharedPath}/storage/framework/cache/.gitignore || true");
+    run("echo '*\n!.gitignore' > {$sharedPath}/storage/framework/sessions/.gitignore || true");
+    run("echo '*\n!.gitignore' > {$sharedPath}/storage/framework/views/.gitignore || true");
+    
+    // Set ownership and permissions
+    run("chown -R www-data:www-data {$sharedPath}/storage");
+    run("chmod -R 775 {$sharedPath}/storage");
+});
+
+// Fix permissions on release
 task('deploy:permissions', function () {
     run('chown -R www-data:www-data {{release_path}}');
-    run('chmod -R 775 {{release_path}}/storage {{release_path}}/bootstrap/cache');
+    run('chmod -R 775 {{release_path}}/bootstrap/cache');
+    // Storage is symlinked to shared, permissions handled by deploy:storage:setup
 });
 
 // Override deploy:update_code to use rsync instead of git
@@ -125,8 +169,10 @@ task('deploy', [
     'deploy:setup',
     'deploy:lock',
     'deploy:release',
+    'deploy:storage:setup',     // Ensure shared storage dirs exist
     'rsync',                    // Upload code via rsync (replaces deploy:update_code)
     'deploy:shared',            // Symlink shared files
+    'deploy:writable',          // Set writable permissions
     'deploy:vendors',           // Install composer deps
     'artisan:storage:link',
     'artisan:migrate',
