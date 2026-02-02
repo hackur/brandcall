@@ -19,6 +19,7 @@
         "spatie/laravel-activitylog": "^4.11",
         "spatie/laravel-backup": "^9.4",
         "spatie/laravel-health": "^1.35",
+        "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-permission": "^6.24",
         "tightenco/ziggy": "^2.0"
     },

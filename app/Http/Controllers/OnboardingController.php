@@ -7,6 +7,7 @@ use App\Models\SupportTicket;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,7 +30,7 @@ class OnboardingController extends Controller
                 'kyc_submitted' => $user->hasCompletedKyc(),
                 'onboarding_progress' => $user->getOnboardingProgress(),
             ],
-            'documents' => $user->documents()->latest()->get(),
+            'documents' => $user->documents()->latest()->get()->map(fn ($doc) => $this->formatDocument($doc)),
             'tickets' => $user->supportTickets()->latest()->limit(5)->get(),
         ]);
     }
@@ -96,13 +97,51 @@ class OnboardingController extends Controller
         $user = $request->user();
 
         return Inertia::render('Onboarding/Documents', [
-            'documents' => $user->documents()->latest()->get(),
+            'documents' => $user->documents()->latest()->get()->map(fn ($doc) => $this->formatDocument($doc)),
             'documentTypes' => Document::getAllTypes(),
         ]);
     }
 
     /**
-     * Upload a document.
+     * Format document for frontend with metadata.
+     */
+    protected function formatDocument(Document $document): array
+    {
+        $metadata = $document->getMetadata();
+
+        return [
+            'id' => $document->id,
+            'type' => $document->type,
+            'type_label' => Document::getTypeLabel($document->type),
+            'name' => $document->name,
+            'original_filename' => $document->original_filename,
+            'status' => $document->status,
+            'notes' => $document->notes,
+            // File metadata
+            'mime_type' => $metadata['mime_type'],
+            'size' => $metadata['size'],
+            'size_formatted' => $metadata['size_formatted'],
+            'extension' => $metadata['extension'],
+            'is_image' => $metadata['is_image'],
+            'is_pdf' => $metadata['is_pdf'],
+            // URLs
+            'thumbnail_url' => $document->getThumbnailUrl(),
+            'preview_url' => $document->getPreviewUrl(),
+            'download_url' => $document->getDownloadUrl(),
+            // Timestamps
+            'uploaded_at' => $document->created_at?->toISOString(),
+            'uploaded_at_formatted' => $document->created_at?->format('M j, Y g:i A'),
+            'modified_at' => $document->updated_at?->toISOString(),
+            'modified_at_formatted' => $document->updated_at?->format('M j, Y g:i A'),
+            'last_viewed_at' => $document->last_viewed_at?->toISOString(),
+            'last_viewed_at_formatted' => $document->last_viewed_at?->format('M j, Y g:i A'),
+            'reviewed_at' => $document->reviewed_at?->toISOString(),
+            'reviewed_at_formatted' => $document->reviewed_at?->format('M j, Y g:i A'),
+        ];
+    }
+
+    /**
+     * Upload a document with type-specific validation.
      */
     public function uploadDocument(Request $request): RedirectResponse
     {
@@ -119,26 +158,66 @@ class OnboardingController extends Controller
             Document::TYPE_OTHER,
         ]);
 
-        $validated = $request->validate([
-            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
+        // First validate type and name
+        $request->validate([
             'type' => "required|string|in:{$validTypes}",
             'name' => 'required|string|max:255',
         ]);
 
-        $file = $request->file('file');
-        $path = $file->store('documents/' . $request->user()->id, 'private');
+        $type = $request->input('type');
 
-        $request->user()->documents()->create([
-            'type' => $validated['type'],
-            'name' => $validated['name'],
+        // Get type-specific allowed extensions
+        $extensions = Document::getAllowedExtensionsForType($type);
+        $mimes = implode(',', $extensions);
+
+        // Validate file with type-specific rules
+        $request->validate([
+            'file' => "required|file|mimes:{$mimes}|max:10240",
+        ], [
+            'file.mimes' => "This document type only accepts: " . strtoupper(implode(', ', $extensions)) . " files.",
+        ]);
+
+        $file = $request->file('file');
+
+        // Create document record
+        $document = $request->user()->documents()->create([
+            'type' => $type,
+            'name' => $request->input('name'),
             'original_filename' => $file->getClientOriginalName(),
-            'path' => $path,
+            'path' => '', // Will be updated by media library
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'status' => 'pending',
         ]);
 
+        // Add file to media library
+        $document->addMedia($file)
+            ->usingFileName($document->id . '_' . time() . '.' . $file->getClientOriginalExtension())
+            ->toMediaCollection('document');
+
+        // Update path with media library path
+        $media = $document->getFirstMedia('document');
+        if ($media) {
+            $document->update(['path' => $media->getPath()]);
+        }
+
         return back()->with('success', 'Document uploaded successfully.');
+    }
+
+    /**
+     * View/preview a document (marks as viewed).
+     */
+    public function viewDocument(Request $request, Document $document): RedirectResponse
+    {
+        if ($document->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $document->markAsViewed();
+
+        $url = $document->getPreviewUrl() ?? $document->getDownloadUrl();
+
+        return redirect($url);
     }
 
     /**
@@ -154,7 +233,14 @@ class OnboardingController extends Controller
             return back()->with('error', 'Cannot delete a reviewed document.');
         }
 
-        Storage::disk('private')->delete($document->path);
+        // Delete media files
+        $document->clearMediaCollection('document');
+
+        // Delete legacy file if exists
+        if ($document->path && Storage::disk('private')->exists($document->path)) {
+            Storage::disk('private')->delete($document->path);
+        }
+
         $document->delete();
 
         return back()->with('success', 'Document deleted successfully.');
@@ -169,7 +255,7 @@ class OnboardingController extends Controller
 
         // Check if user has uploaded required documents
         $hasKycDocs = $user->documents()
-            ->whereIn('type', ['business_license', 'tax_id', 'kyc'])
+            ->whereIn('type', ['business_license', 'tax_id', 'kyc', 'drivers_license', 'government_id'])
             ->exists();
 
         if (!$hasKycDocs) {

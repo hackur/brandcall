@@ -43,6 +43,7 @@ Route::middleware(['auth'])->prefix('onboarding')->name('onboarding.')->group(fu
     Route::get('/documents', [OnboardingController::class, 'documents'])->name('documents');
     Route::post('/documents', [OnboardingController::class, 'uploadDocument'])->name('documents.upload');
     Route::delete('/documents/{document}', [OnboardingController::class, 'deleteDocument'])->name('documents.delete');
+    Route::get('/documents/{document}/view', [OnboardingController::class, 'viewDocument'])->name('documents.view');
     Route::post('/kyc/submit', [OnboardingController::class, 'submitKyc'])->name('kyc.submit');
     Route::get('/tickets', [OnboardingController::class, 'tickets'])->name('tickets');
     Route::post('/tickets', [OnboardingController::class, 'createTicket'])->name('tickets.create');
