@@ -21,9 +21,14 @@ class DashboardController extends Controller
             return redirect('/admin');
         }
 
+        // Users pending approval go to onboarding
+        if (! $user->isApproved()) {
+            return redirect()->route('onboarding.index');
+        }
+
         // Regular users without tenant need onboarding
         if (! $tenant) {
-            return Inertia::render('Onboarding');
+            return redirect()->route('onboarding.index');
         }
 
         // Set tenant context

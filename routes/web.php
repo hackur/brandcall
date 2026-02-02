@@ -3,6 +3,7 @@
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,12 +31,33 @@ Route::post('/lp/{slug}/lead', [LandingPageController::class, 'submitLead'])->na
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Routes (Customer Dashboard - Inertia/React)
+| Onboarding Routes (Authenticated, but doesn't require verified email)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
+    Route::get('/', [OnboardingController::class, 'index'])->name('index');
+    Route::get('/profile', [OnboardingController::class, 'profile'])->name('profile');
+    Route::post('/profile', [OnboardingController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/documents', [OnboardingController::class, 'documents'])->name('documents');
+    Route::post('/documents', [OnboardingController::class, 'uploadDocument'])->name('documents.upload');
+    Route::delete('/documents/{document}', [OnboardingController::class, 'deleteDocument'])->name('documents.delete');
+    Route::post('/kyc/submit', [OnboardingController::class, 'submitKyc'])->name('kyc.submit');
+    Route::get('/tickets', [OnboardingController::class, 'tickets'])->name('tickets');
+    Route::post('/tickets', [OnboardingController::class, 'createTicket'])->name('tickets.create');
+    Route::post('/tickets/{ticket}/reply', [OnboardingController::class, 'replyToTicket'])->name('tickets.reply');
+    Route::get('/settings', [OnboardingController::class, 'settings'])->name('settings');
+    Route::get('/docs', [OnboardingController::class, 'documentation'])->name('documentation');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Customer Dashboard - Requires verified & approved)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
+    // Dashboard (redirects to onboarding if not approved)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profile
