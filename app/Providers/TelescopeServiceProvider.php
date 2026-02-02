@@ -52,13 +52,12 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      * Register the Telescope gate.
      *
      * This gate determines who can access Telescope in non-local environments.
+     * Requires super-admin role from Spatie Permission.
      */
     protected function gate(): void
     {
         Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, [
-                'admin@brandcall.io',
-            ]);
+            return $user->hasRole('super-admin');
         });
     }
 }

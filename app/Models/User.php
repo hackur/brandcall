@@ -1,10 +1,8 @@
 <?php
 
 /**
- * BrandCall - Branded Caller ID SaaS Platform
+ * BrandCall - Branded Caller ID SaaS Platform.
  *
- * @package    BrandCall
- * @subpackage Models
  * @author     BrandCall Development Team
  * @copyright  2024-2026 BrandCall
  * @license    Proprietary
@@ -37,32 +35,31 @@ use Spatie\Permission\Traits\HasRoles;
  * Users implement FilamentUser for admin panel access control and
  * MustVerifyEmail for email verification workflow.
  *
- * @property int $id Primary key
- * @property string $name User's full name
- * @property string $email User's email address (unique)
- * @property string $password Hashed password
- * @property int|null $tenant_id Associated tenant for multi-tenancy
- * @property string $status Account status (pending|verified|approved|suspended)
- * @property string|null $phone Personal phone number
- * @property string|null $company_name Business name
- * @property string|null $company_website Business website URL
- * @property string|null $company_phone Business phone number
- * @property string|null $company_address Street address
- * @property string|null $company_city City
- * @property string|null $company_state State/Province
- * @property string|null $company_zip Postal/ZIP code
- * @property string|null $industry Business industry vertical
- * @property string|null $monthly_call_volume Expected monthly call volume tier
- * @property string|null $use_case Primary use case for branded caller ID
- * @property string|null $current_provider Current telephony provider
- * @property string|null $uses_stir_shaken Whether business uses STIR/SHAKEN
- * @property \Carbon\Carbon|null $email_verified_at Email verification timestamp
- * @property \Carbon\Carbon|null $kyc_submitted_at KYC submission timestamp
- * @property \Carbon\Carbon|null $kyc_approved_at KYC approval timestamp
+ * @property int                 $id                      Primary key
+ * @property string              $name                    User's full name
+ * @property string              $email                   User's email address (unique)
+ * @property string              $password                Hashed password
+ * @property int|null            $tenant_id               Associated tenant for multi-tenancy
+ * @property string              $status                  Account status (pending|verified|approved|suspended)
+ * @property string|null         $phone                   Personal phone number
+ * @property string|null         $company_name            Business name
+ * @property string|null         $company_website         Business website URL
+ * @property string|null         $company_phone           Business phone number
+ * @property string|null         $company_address         Street address
+ * @property string|null         $company_city            City
+ * @property string|null         $company_state           State/Province
+ * @property string|null         $company_zip             Postal/ZIP code
+ * @property string|null         $industry                Business industry vertical
+ * @property string|null         $monthly_call_volume     Expected monthly call volume tier
+ * @property string|null         $use_case                Primary use case for branded caller ID
+ * @property string|null         $current_provider        Current telephony provider
+ * @property string|null         $uses_stir_shaken        Whether business uses STIR/SHAKEN
+ * @property \Carbon\Carbon|null $email_verified_at       Email verification timestamp
+ * @property \Carbon\Carbon|null $kyc_submitted_at        KYC submission timestamp
+ * @property \Carbon\Carbon|null $kyc_approved_at         KYC approval timestamp
  * @property \Carbon\Carbon|null $onboarding_completed_at Onboarding completion timestamp
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- *
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
  * @property-read Tenant|null $tenant Associated tenant
  * @property-read \Illuminate\Database\Eloquent\Collection|Document[] $documents
  * @property-read \Illuminate\Database\Eloquent\Collection|SupportTicket[] $supportTickets
@@ -303,6 +300,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      * This is enforced at the panel level for security.
      *
      * @param Panel $panel The Filament panel being accessed
+     *
      * @return bool True if user can access the panel
      */
     public function canAccessPanel(Panel $panel): bool

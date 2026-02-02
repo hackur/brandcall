@@ -26,13 +26,26 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
+     *
+     * Redirects users based on their role:
+     * - super-admin: /admin (Filament admin panel) - uses Inertia::location for full page redirect
+     * - regular users: /dashboard (which handles onboarding redirect)
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
+        $user = $request->user();
+
+        // Super-admins go directly to admin panel
+        // Use Inertia::location() for full page redirect to non-Inertia route (Filament/Livewire)
+        if ($user->hasRole('super-admin')) {
+            return Inertia::location('/admin');
+        }
+
+        // Everyone else goes to dashboard (handles onboarding redirect)
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

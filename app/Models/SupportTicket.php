@@ -1,10 +1,8 @@
 <?php
 
 /**
- * BrandCall - Branded Caller ID SaaS Platform
+ * BrandCall - Branded Caller ID SaaS Platform.
  *
- * @package    BrandCall
- * @subpackage Models
  * @author     BrandCall Development Team
  * @copyright  2024-2026 BrandCall
  * @license    Proprietary
@@ -44,21 +42,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * - KYC: Verification and compliance questions
  * - Feature: Feature requests and suggestions
  *
- * @property int $id Primary key
- * @property int $user_id Ticket creator
- * @property int|null $tenant_id Associated tenant
- * @property string $ticket_number Unique ticket reference (TKT-XXXXX)
- * @property string $subject Brief description of issue
- * @property string $description Detailed issue description
- * @property string $category Issue category
- * @property string $priority Urgency level
- * @property string $status Current ticket status
- * @property int|null $assigned_to Assigned admin user
- * @property \Carbon\Carbon|null $resolved_at When issue was resolved
- * @property \Carbon\Carbon|null $closed_at When ticket was closed
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- *
+ * @property int                 $id            Primary key
+ * @property int                 $user_id       Ticket creator
+ * @property int|null            $tenant_id     Associated tenant
+ * @property string              $ticket_number Unique ticket reference (TKT-XXXXX)
+ * @property string              $subject       Brief description of issue
+ * @property string              $description   Detailed issue description
+ * @property string              $category      Issue category
+ * @property string              $priority      Urgency level
+ * @property string              $status        Current ticket status
+ * @property int|null            $assigned_to   Assigned admin user
+ * @property \Carbon\Carbon|null $resolved_at   When issue was resolved
+ * @property \Carbon\Carbon|null $closed_at     When ticket was closed
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
  * @property-read User $user Ticket creator
  * @property-read Tenant|null $tenant Associated tenant
  * @property-read User|null $assignee Assigned admin
@@ -177,8 +174,6 @@ class SupportTicket extends Model
      *
      * Automatically generates a unique ticket number on creation
      * using the format TKT-XXXXXXXXX.
-     *
-     * @return void
      */
     protected static function booted(): void
     {
@@ -287,6 +282,7 @@ class SupportTicket extends Model
      * Get human-readable label for a priority level.
      *
      * @param string $priority Priority constant value
+     *
      * @return string Human-readable label
      */
     public static function getPriorityLabel(string $priority): string
@@ -304,6 +300,7 @@ class SupportTicket extends Model
      * Get human-readable label for a category.
      *
      * @param string $category Category constant value
+     *
      * @return string Human-readable label
      */
     public static function getCategoryLabel(string $category): string
@@ -322,6 +319,7 @@ class SupportTicket extends Model
      * Get human-readable label for a status.
      *
      * @param string $status Status constant value
+     *
      * @return string Human-readable label
      */
     public static function getStatusLabel(string $status): string

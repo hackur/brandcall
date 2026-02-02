@@ -12,7 +12,7 @@ class DocumentDownloadController extends Controller
     public function __invoke(Document $document): StreamedResponse
     {
         // Check if file exists
-        if (!Storage::disk('private')->exists($document->path)) {
+        if (! Storage::disk('private')->exists($document->path)) {
             abort(404, 'Document not found');
         }
 

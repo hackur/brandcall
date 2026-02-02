@@ -26,6 +26,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // New users without a tenant are redirected to onboarding
+        $response->assertRedirect(route('onboarding.index', absolute: false));
     }
 }

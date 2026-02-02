@@ -68,15 +68,15 @@ class DocumentResource extends Resource
                     ->label('')
                     ->width(60)
                     ->height(60)
-                    ->defaultImageUrl(fn (Document $record) => $record->getMetadata()['is_pdf'] 
-                        ? 'https://cdn-icons-png.flaticon.com/512/337/337946.png' 
+                    ->defaultImageUrl(fn (Document $record) => $record->getMetadata()['is_pdf']
+                        ? 'https://cdn-icons-png.flaticon.com/512/337/337946.png'
                         : null)
                     ->getStateUsing(fn (Document $record) => $record->getThumbnailUrl())
                     ->circular(false),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('User')
-                    ->description(fn (Document $record) => $record->user?->email)
+                    ->description(fn (Document $record) => $record->user->email)
                     ->searchable()
                     ->sortable(),
 
@@ -141,9 +141,10 @@ class DocumentResource extends Resource
                     ]),
 
                 Tables\Filters\SelectFilter::make('type')
-                    ->options(fn () => collect(Document::getAllTypes())
-                        ->pluck('label', 'value')
-                        ->toArray()
+                    ->options(
+                        fn () => collect(Document::getAllTypes())
+                            ->pluck('label', 'value')
+                            ->toArray()
                     ),
             ])
             ->actions([

@@ -40,21 +40,21 @@ class SmokeTest extends TestCase
             'subscription_tier' => 'starter',
         ]);
 
-        // Create admin (no tenant)
-        $this->admin = User::create([
+        // Create admin (no tenant, email verified)
+        $this->admin = User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
             'tenant_id' => null,
+            'status' => 'approved',
         ]);
         $this->admin->assignRole('super-admin');
 
-        // Create owner (with tenant)
-        $this->owner = User::create([
+        // Create owner (with tenant, email verified, approved)
+        $this->owner = User::factory()->create([
             'name' => 'Owner User',
             'email' => 'owner@test.com',
-            'password' => bcrypt('password'),
             'tenant_id' => $this->tenant->id,
+            'status' => 'approved',
         ]);
         $this->owner->assignRole('owner');
     }
@@ -181,10 +181,11 @@ class SmokeTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function test_admin_redirects_guest_to_admin_login(): void
+    public function test_admin_redirects_guest_to_login(): void
     {
+        // Since we use single login, unauthenticated users go to /login
         $response = $this->get('/admin');
-        $response->assertRedirect('/admin/login');
+        $response->assertRedirect('/login');
     }
 
     public function test_admin_dashboard_redirects_super_admin(): void
@@ -196,16 +197,16 @@ class SmokeTest extends TestCase
 
     public function test_onboarding_shown_for_user_without_tenant(): void
     {
-        $userNoTenant = User::create([
+        // User with email verified but not approved (status: pending)
+        $userNoTenant = User::factory()->create([
             'name' => 'No Tenant User',
             'email' => 'notenant@test.com',
-            'password' => bcrypt('password'),
             'tenant_id' => null,
+            'status' => 'pending', // Not yet approved
         ]);
         $userNoTenant->assignRole('member');
 
         $response = $this->actingAs($userNoTenant)->get('/dashboard');
-        $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page->component('Onboarding'));
+        $response->assertRedirect(route('onboarding.index'));
     }
 }

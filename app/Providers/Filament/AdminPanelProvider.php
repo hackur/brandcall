@@ -6,6 +6,8 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -26,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            // No ->login() - use main app login, redirect based on role
             ->brandName('BrandCall Admin')
             ->colors([
                 'primary' => Color::Purple,
@@ -42,6 +44,49 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Customer Management'),
+                NavigationGroup::make()
+                    ->label('Support'),
+                NavigationGroup::make()
+                    ->label('Developer Tools')
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->collapsed(),
+            ])
+            ->navigationItems([
+                // Developer Tools - only visible to super-admins
+                NavigationItem::make('Horizon')
+                    ->url('/horizon', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-queue-list')
+                    ->group('Developer Tools')
+                    ->sort(1)
+                    ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
+                NavigationItem::make('Telescope')
+                    ->url('/telescope', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-sparkles')
+                    ->group('Developer Tools')
+                    ->sort(2)
+                    ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
+                NavigationItem::make('Pulse')
+                    ->url('/pulse', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-chart-bar')
+                    ->group('Developer Tools')
+                    ->sort(3)
+                    ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
+                NavigationItem::make('Health Check')
+                    ->url('/health', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-heart')
+                    ->group('Developer Tools')
+                    ->sort(4)
+                    ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
+                NavigationItem::make('API Docs')
+                    ->url('/docs/api', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-document-text')
+                    ->group('Developer Tools')
+                    ->sort(5)
+                    ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
             ])
             ->middleware([
                 EncryptCookies::class,

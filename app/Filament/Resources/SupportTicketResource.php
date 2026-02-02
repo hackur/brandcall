@@ -197,7 +197,7 @@ class SupportTicketResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn (SupportTicket $record) => !in_array($record->status, ['resolved', 'closed']))
+                    ->visible(fn (SupportTicket $record) => ! in_array($record->status, ['resolved', 'closed']))
                     ->action(function (SupportTicket $record) {
                         $record->update(['status' => 'resolved']);
 

@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('status')->default('pending')->after('email_verified_at');
             $table->string('phone')->nullable()->after('status');
-            
+
             // Company info
             $table->string('company_name')->nullable()->after('phone');
             $table->string('company_website')->nullable();
@@ -20,19 +20,19 @@ return new class extends Migration
             $table->string('company_city')->nullable();
             $table->string('company_state')->nullable();
             $table->string('company_zip')->nullable();
-            
+
             // Qualification info
             $table->string('industry')->nullable();
             $table->string('monthly_call_volume')->nullable();
             $table->string('use_case')->nullable();
             $table->string('current_provider')->nullable();
             $table->string('uses_stir_shaken')->nullable();
-            
+
             // KYC tracking
             $table->timestamp('kyc_submitted_at')->nullable();
             $table->timestamp('kyc_approved_at')->nullable();
             $table->timestamp('onboarding_completed_at')->nullable();
-            
+
             // Indexes
             $table->index('status');
         });

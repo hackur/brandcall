@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * BrandCall - Branded Caller ID SaaS Platform.
+ *
+ * @author     BrandCall Development Team
+ * @copyright  2024-2026 BrandCall
+ * @license    Proprietary
+ */
+
 declare(strict_types=1);
 
 namespace App\Services\Voice;
@@ -10,25 +18,60 @@ use Illuminate\Support\Manager;
 use InvalidArgumentException;
 
 /**
- * Voice Manager.
+ * Voice Manager - Laravel-style manager for voice provider drivers.
  *
- * Laravel-style manager for voice providers. Supports multiple drivers
- * that can be swapped via configuration.
+ * Provides a unified interface for interacting with multiple telephony
+ * providers. Implements the Manager pattern to allow runtime driver
+ * selection and easy provider swapping.
  *
- * Usage:
- *   // Use default driver
- *   $result = Voice::call($brand, $from, $to, $reason);
+ * Supported Drivers:
+ * - telnyx: Telnyx communications platform
+ * - numhub: NumHub BrandControl for enterprise branded calling
+ * - twilio: Twilio programmable voice
+ * - null: Mock driver for testing
  *
- *   // Use specific driver
- *   $result = Voice::driver('telnyx')->call($brand, $from, $to, $reason);
+ * Usage Examples:
+ * ```php
+ * // Use default driver (from config)
+ * $result = Voice::call($brand, $from, $to, $reason);
+ *
+ * // Use specific driver
+ * $result = Voice::driver('telnyx')->call($brand, $from, $to, $reason);
+ *
+ * // Check if provider is configured
+ * if (Voice::isConfigured()) {
+ *     // Make calls
+ * }
+ *
+ * // Get available features
+ * $features = Voice::features();
+ * ```
  *
  * Configuration (config/voice.php):
- *   'default' => env('VOICE_DRIVER', 'telnyx'),
- *   'drivers' => [
- *       'telnyx' => [...],
- *       'numhub' => [...],
- *       'twilio' => [...],
- *   ]
+ * ```php
+ * return [
+ *     'default' => env('VOICE_DRIVER', 'telnyx'),
+ *     'drivers' => [
+ *         'telnyx' => ['api_key' => env('TELNYX_API_KEY')],
+ *         'numhub' => ['api_key' => env('NUMHUB_API_KEY')],
+ *         'twilio' => ['sid' => env('TWILIO_SID'), ...],
+ *     ],
+ * ];
+ * ```
+ *
+ * @see \App\Contracts\VoiceProvider Interface for all drivers
+ * @see \App\Facades\Voice Facade for static access
+ *
+ * @method array  call(\App\Models\Brand $brand, string $from, string $to, ?string $callReason = null, array $options = [])
+ * @method array  getCallStatus(string $callSid)
+ * @method array  hangup(string $callSid)
+ * @method array  registerBrand(\App\Models\Brand $brand)
+ * @method array  registerNumber(\App\Models\BrandPhoneNumber $phoneNumber)
+ * @method array  updateCnam(string $phoneNumber, string $callerName)
+ * @method bool   verifyWebhook(string $payload, string $signature, array $headers = [])
+ * @method array  features()
+ * @method bool   isConfigured()
+ * @method string name()
  */
 class VoiceManager extends Manager
 {

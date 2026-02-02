@@ -146,7 +146,7 @@ class BrandedCallController extends Controller
             'external_call_sid' => $result['call_sid'],
             'status' => 'initiated',
             'cost' => $tierPrice,
-            'attestation_level' => $result['attestation_level'],
+            'attestation_level' => $result['attestation_level'] ?? $callLog->attestation_level,
             'brand' => [
                 'name' => $brand->name,
                 'display_name' => $brand->display_name,

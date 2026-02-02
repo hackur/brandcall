@@ -122,7 +122,7 @@ task('artisan:queue:restart', function () {
 // Ensure shared storage directories exist with proper structure
 task('deploy:storage:setup', function () {
     $sharedPath = '{{deploy_path}}/shared';
-    
+
     // Create all required storage directories
     $dirs = [
         'storage/app',
@@ -135,16 +135,16 @@ task('deploy:storage:setup', function () {
         'storage/framework/views',
         'storage/logs',
     ];
-    
+
     foreach ($dirs as $dir) {
         run("mkdir -p {$sharedPath}/{$dir}");
     }
-    
+
     // Create .gitignore files to prevent git issues
     run("echo '*\n!.gitignore' > {$sharedPath}/storage/framework/cache/.gitignore || true");
     run("echo '*\n!.gitignore' > {$sharedPath}/storage/framework/sessions/.gitignore || true");
     run("echo '*\n!.gitignore' > {$sharedPath}/storage/framework/views/.gitignore || true");
-    
+
     // Set ownership and permissions
     run("chown -R www-data:www-data {$sharedPath}/storage");
     run("chmod -R 775 {$sharedPath}/storage");

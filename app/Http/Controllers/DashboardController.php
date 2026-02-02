@@ -43,7 +43,7 @@ class DashboardController extends Controller
             'totalCalls' => CallLog::count(),
             'monthlySpend' => UsageRecord::where('year', $now->year)
                 ->where('month', $now->month)
-                ->first()?->total_cost ?? 0,
+                ->value('total_cost') ?? 0,
         ];
 
         // Get recent brands

@@ -86,11 +86,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Health Check Routes
+| Health Check Routes (super-admin only)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'can:viewHealth'])->group(function () {
     Route::get('/health', HealthCheckResultsController::class)->name('health');
     Route::get('/health/json', HealthCheckJsonResultsController::class)->name('health.json');
 });

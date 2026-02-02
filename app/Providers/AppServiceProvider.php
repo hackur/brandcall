@@ -15,8 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Only register Telescope in local environment
-        if ($this->app->environment('local')) {
+        // Register Telescope in local and production (with proper auth gates)
+        if ($this->app->environment('local', 'production')) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }
@@ -29,19 +29,26 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        // Horizon authorization
-        Horizon::auth(function ($request) {
+        // Define the super-admin check used across all dev dashboards
+        $isSuperAdmin = fn ($user) => $user?->hasRole('super-admin') ?? false;
+
+        // Horizon authorization - requires super-admin role
+        Horizon::auth(function ($request) use ($isSuperAdmin) {
             if ($this->app->environment('local')) {
                 return true;
             }
 
-            return $request->user()?->email === 'admin@brandcall.io';
+            return $isSuperAdmin($request->user());
         });
 
-        // Pulse authorization
-        Gate::define('viewPulse', function ($user) {
-            return $user->email === 'admin@brandcall.io';
-        });
+        // Pulse authorization - requires super-admin role
+        Gate::define('viewPulse', fn ($user) => $isSuperAdmin($user));
+
+        // Health Check authorization - requires super-admin role
+        Gate::define('viewHealth', fn ($user) => $isSuperAdmin($user));
+
+        // API Documentation (Scramble) - requires super-admin role
+        Gate::define('viewApiDocs', fn ($user) => $isSuperAdmin($user));
 
         // Pulse user resolution
         Pulse::user(fn ($user) => [

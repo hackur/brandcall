@@ -1,7 +1,7 @@
 # BrandCall TODO
 
 ## Current Status
-- **Release**: 13 (production)
+- **Release**: 18 (production)
 - **URL**: https://brandcall.io
 - **Sessions**: Redis
 - **Deployment**: Deployer (zero-downtime)
@@ -73,8 +73,10 @@
 - [ ] API documentation
 
 ### Infrastructure
-- [ ] Set up Horizon for queue monitoring
-- [ ] Configure Pulse for app monitoring
+- [x] Set up Horizon for queue monitoring (role-gated)
+- [x] Configure Pulse for app monitoring (role-gated)
+- [x] Telescope for debugging (role-gated)
+- [x] Health checks (Spatie Health, role-gated)
 - [ ] Automated backups
 - [ ] Error tracking (Sentry/Flare)
 - [ ] Rate limiting
@@ -112,6 +114,8 @@
 - [x] Landing page CMS
 - [x] 4-step registration flow
 - [x] Company profile form
+- [x] Dev dashboards (Horizon, Telescope, Pulse, Health) with super-admin gates
+- [x] Filament navigation links to dev tools (super-admin only)
 
 ---
 

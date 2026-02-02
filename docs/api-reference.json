@@ -1,0 +1,831 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "BrandCall API Documentation",
+        "version": "1.0.0",
+        "description": "# BrandCall API\n\nEnterprise branded caller ID platform with STIR/SHAKEN attestation and Rich Call Data (RCD) support.\n\n## Authentication\n\nAll API requests require a Bearer token (brand-specific API key):\n\n```\nAuthorization: Bearer bci_your_api_key_here\n```\n\n## Phone Number Format\n\nAll phone numbers must be in E.164 format: `+14155551234`\n\n## Rate Limits\n\n- 100 requests per minute per API key\n- 1,000 calls per hour per brand\n\n## Pricing Tiers\n\n| Monthly Calls | Price per Call |\n|--------------|----------------|\n| 0 - 9,999 | $0.075 |\n| 10,000 - 99,999 | $0.065 |\n| 100,000 - 999,999 | $0.050 |\n| 1,000,000 - 9,999,999 | $0.035 |\n| 10,000,000+ | $0.025 |"
+    },
+    "servers": [
+        {
+            "url": "http://localhost/api"
+        }
+    ],
+    "paths": {
+        "/v1/brands/{slug}/calls": {
+            "post": {
+                "operationId": "calls.initiate",
+                "description": "POST /api/v1/brands/{slug}/calls",
+                "summary": "Initiate a branded call",
+                "tags": [
+                    "BrandedCall"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "description": "Brand slug",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "from": {
+                                        "type": "string",
+                                        "pattern": "^\\+[1-9]\\d{1,14}$"
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "description": "E.164",
+                                        "pattern": "^\\+[1-9]\\d{1,14}$"
+                                    },
+                                    "call_reason": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "E.164",
+                                        "maxLength": 64
+                                    },
+                                    "attestation_level": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "enum": [
+                                            "A",
+                                            "B",
+                                            "C"
+                                        ]
+                                    },
+                                    "metadata": {
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ],
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "from",
+                                    "to"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "call_id": {
+                                            "type": "string"
+                                        },
+                                        "external_call_sid": {
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "initiated"
+                                            ]
+                                        },
+                                        "cost": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "number",
+                                                    "enum": [
+                                                        0.025
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "number",
+                                                    "enum": [
+                                                        0.035
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "number",
+                                                    "enum": [
+                                                        0.05
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "number",
+                                                    "enum": [
+                                                        0.065
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "number",
+                                                    "enum": [
+                                                        0.075
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "attestation_level": {
+                                            "type": "string"
+                                        },
+                                        "brand": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "display_name": {
+                                                    "type": "string"
+                                                },
+                                                "logo_url": {
+                                                    "type": "string"
+                                                },
+                                                "call_reason": {}
+                                            },
+                                            "required": [
+                                                "name",
+                                                "display_name",
+                                                "logo_url",
+                                                "call_reason"
+                                            ]
+                                        },
+                                        "stir_shaken": {
+                                            "type": "object",
+                                            "properties": {
+                                                "enabled": {
+                                                    "type": "boolean"
+                                                },
+                                                "verified": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "enabled",
+                                                "verified"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "call_id",
+                                        "external_call_sid",
+                                        "status",
+                                        "cost",
+                                        "attestation_level",
+                                        "brand",
+                                        "stir_shaken"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Failed to initiate call"
+                                            ]
+                                        },
+                                        "details": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error",
+                                        "details"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "The \"from\" number is not registered to this brand"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Invalid API key"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Brand not found or inactive"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Validation failed"
+                                            ]
+                                        },
+                                        "details": {
+                                            "$ref": "#/components/schemas/MessageBag"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error",
+                                        "details"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "operationId": "calls.index",
+                "description": "GET /api/v1/brands/{slug}/calls",
+                "summary": "List calls for a brand",
+                "tags": [
+                    "BrandedCall"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "description": "Brand slug",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "calls": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "call_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "from": {
+                                                        "type": "string"
+                                                    },
+                                                    "to": {
+                                                        "type": "string"
+                                                    },
+                                                    "cost": {
+                                                        "type": "string"
+                                                    },
+                                                    "initiated_at": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "call_id",
+                                                    "status",
+                                                    "from",
+                                                    "to",
+                                                    "cost",
+                                                    "initiated_at"
+                                                ]
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "calls",
+                                        "total"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Invalid API key"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Brand not found"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/brands/{slug}/calls/{callId}": {
+            "get": {
+                "operationId": "calls.show",
+                "description": "GET /api/v1/brands/{slug}/calls/{callId}",
+                "summary": "Get call status",
+                "tags": [
+                    "BrandedCall"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "description": "Brand slug",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "callId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Call ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "call_id": {
+                                            "type": "string"
+                                        },
+                                        "external_call_sid": {
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "from": {
+                                            "type": "string"
+                                        },
+                                        "to": {
+                                            "type": "string"
+                                        },
+                                        "attestation_level": {
+                                            "type": "string"
+                                        },
+                                        "duration": {
+                                            "type": "object",
+                                            "properties": {
+                                                "ring_seconds": {
+                                                    "type": "string"
+                                                },
+                                                "talk_seconds": {
+                                                    "type": "string"
+                                                },
+                                                "total_seconds": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "ring_seconds",
+                                                "talk_seconds",
+                                                "total_seconds"
+                                            ]
+                                        },
+                                        "cost": {
+                                            "type": "string"
+                                        },
+                                        "timestamps": {
+                                            "type": "object",
+                                            "properties": {
+                                                "initiated_at": {
+                                                    "type": "string"
+                                                },
+                                                "answered_at": {
+                                                    "type": "string"
+                                                },
+                                                "ended_at": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "initiated_at",
+                                                "answered_at",
+                                                "ended_at"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "call_id",
+                                        "external_call_sid",
+                                        "status",
+                                        "from",
+                                        "to",
+                                        "attestation_level",
+                                        "duration",
+                                        "cost",
+                                        "timestamps"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean"
+                                                },
+                                                "error": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "Call not found"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "success",
+                                                "error"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean"
+                                                },
+                                                "error": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "Brand not found"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "success",
+                                                "error"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Invalid API key"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/webhooks/numhub": {
+            "post": {
+                "operationId": "webhooks.numhub",
+                "description": "POST /webhooks/numhub",
+                "summary": "Handle NumHub webhooks",
+                "tags": [
+                    "Webhook"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "event": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Processing failed"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "success"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Invalid signature"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/webhooks/telnyx": {
+            "post": {
+                "operationId": "webhooks.telnyx",
+                "description": "POST /webhooks/telnyx",
+                "summary": "Handle Telnyx webhooks",
+                "tags": [
+                    "Webhook"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "type": "object",
+                                        "properties": {
+                                            "event_type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Processing failed"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "success"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "MessageBag": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": "MessageBag"
+            }
+        }
+    }
+}

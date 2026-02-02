@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * BrandCall - Branded Caller ID SaaS Platform.
+ *
+ * @author     BrandCall Development Team
+ * @copyright  2024-2026 BrandCall
+ * @license    Proprietary
+ */
+
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Document;
@@ -7,10 +17,33 @@ use App\Models\SupportTicket;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Onboarding Controller - Handles new user KYC and verification flow.
+ *
+ * Manages the complete onboarding experience for new users:
+ * - Dashboard with progress tracking
+ * - Company profile collection
+ * - Document upload and management (KYC)
+ * - Support ticket creation
+ * - Settings and documentation access
+ *
+ * User Status Flow:
+ * 1. pending - User registered, email not verified
+ * 2. verified - Email verified, KYC submitted
+ * 3. approved - KYC approved by admin, can use platform
+ *
+ * Security:
+ * - All routes require authentication
+ * - Document ownership verified on all operations
+ * - Type-specific MIME validation for uploads
+ * - Approved documents cannot be deleted
+ *
+ * @see \App\Models\User::getOnboardingProgress() For progress calculation
+ * @see \App\Models\Document For document types and validation
+ */
 class OnboardingController extends Controller
 {
     /**
@@ -129,10 +162,10 @@ class OnboardingController extends Controller
             'preview_url' => $document->getPreviewUrl(),
             'download_url' => $document->getDownloadUrl(),
             // Timestamps
-            'uploaded_at' => $document->created_at?->toISOString(),
-            'uploaded_at_formatted' => $document->created_at?->format('M j, Y g:i A'),
-            'modified_at' => $document->updated_at?->toISOString(),
-            'modified_at_formatted' => $document->updated_at?->format('M j, Y g:i A'),
+            'uploaded_at' => $document->created_at->toISOString(),
+            'uploaded_at_formatted' => $document->created_at->format('M j, Y g:i A'),
+            'modified_at' => $document->updated_at->toISOString(),
+            'modified_at_formatted' => $document->updated_at->format('M j, Y g:i A'),
             'last_viewed_at' => $document->last_viewed_at?->toISOString(),
             'last_viewed_at_formatted' => $document->last_viewed_at?->format('M j, Y g:i A'),
             'reviewed_at' => $document->reviewed_at?->toISOString(),
@@ -174,7 +207,7 @@ class OnboardingController extends Controller
         $request->validate([
             'file' => "required|file|mimes:{$mimes}|max:10240",
         ], [
-            'file.mimes' => "This document type only accepts: " . strtoupper(implode(', ', $extensions)) . " files.",
+            'file.mimes' => 'This document type only accepts: ' . strtoupper(implode(', ', $extensions)) . ' files.',
         ]);
 
         $file = $request->file('file');
@@ -258,7 +291,7 @@ class OnboardingController extends Controller
             ->whereIn('type', ['business_license', 'tax_id', 'kyc', 'drivers_license', 'government_id'])
             ->exists();
 
-        if (!$hasKycDocs) {
+        if (! $hasKycDocs) {
             return back()->with('error', 'Please upload at least one verification document.');
         }
 

@@ -1,10 +1,8 @@
 <?php
 
 /**
- * BrandCall - Branded Caller ID SaaS Platform
+ * BrandCall - Branded Caller ID SaaS Platform.
  *
- * @package    BrandCall
- * @subpackage Models
  * @author     BrandCall Development Team
  * @copyright  2024-2026 BrandCall
  * @license    Proprietary
@@ -38,23 +36,22 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * - Files stored in private disk (not publicly accessible)
  * - Type-specific MIME validation enforced
  *
- * @property int $id Primary key
- * @property int $user_id Owning user
- * @property int|null $tenant_id Associated tenant
- * @property string $type Document type constant
- * @property string $name User-provided document name
- * @property string $original_filename Original uploaded filename
- * @property string $path Storage path (legacy, use Media Library)
- * @property string $mime_type MIME type of uploaded file
- * @property int $size File size in bytes
- * @property string $status Review status (pending|approved|rejected)
- * @property string|null $notes Admin review notes (visible to user)
- * @property \Carbon\Carbon|null $reviewed_at When document was reviewed
- * @property int|null $reviewed_by Admin who reviewed
- * @property \Carbon\Carbon|null $last_viewed_at Last preview/download
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- *
+ * @property int                 $id                Primary key
+ * @property int                 $user_id           Owning user
+ * @property int|null            $tenant_id         Associated tenant
+ * @property string              $type              Document type constant
+ * @property string              $name              User-provided document name
+ * @property string              $original_filename Original uploaded filename
+ * @property string              $path              Storage path (legacy, use Media Library)
+ * @property string              $mime_type         MIME type of uploaded file
+ * @property int                 $size              File size in bytes
+ * @property string              $status            Review status (pending|approved|rejected)
+ * @property string|null         $notes             Admin review notes (visible to user)
+ * @property \Carbon\Carbon|null $reviewed_at       When document was reviewed
+ * @property int|null            $reviewed_by       Admin who reviewed
+ * @property \Carbon\Carbon|null $last_viewed_at    Last preview/download
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
  * @property-read User $user Document owner
  * @property-read Tenant|null $tenant Associated tenant
  * @property-read User|null $reviewer Admin who reviewed
@@ -172,8 +169,6 @@ class Document extends Model implements HasMedia
      *
      * Documents are stored in a single-file collection. Accepted MIME types
      * vary by document type (e.g., legal docs require PDF).
-     *
-     * @return void
      */
     public function registerMediaCollections(): void
     {
@@ -190,7 +185,6 @@ class Document extends Model implements HasMedia
      * - preview: 800x800 for detail views
      *
      * @param Media|null $media The media item being converted
-     * @return void
      */
     public function registerMediaConversions(?Media $media = null): void
     {
@@ -269,6 +263,7 @@ class Document extends Model implements HasMedia
      * Used for frontend validation hints and error messages.
      *
      * @param string $type Document type constant
+     *
      * @return array<int, string> Array of allowed extensions
      */
     public static function getAllowedExtensionsForType(string $type): array
@@ -291,6 +286,7 @@ class Document extends Model implements HasMedia
      * Returns validation rules suitable for use with Request validation.
      *
      * @param string $type Document type constant
+     *
      * @return array<string, string> Validation rules array
      */
     public static function getValidationRulesForType(string $type): array
@@ -370,8 +366,6 @@ class Document extends Model implements HasMedia
      *
      * Called when a user or admin previews/downloads the document.
      * Useful for audit trails and activity tracking.
-     *
-     * @return void
      */
     public function markAsViewed(): void
     {
@@ -404,7 +398,7 @@ class Document extends Model implements HasMedia
     public function getThumbnailUrl(): ?string
     {
         $media = $this->getFile();
-        if (!$media) {
+        if (! $media) {
             return null;
         }
 
@@ -426,7 +420,7 @@ class Document extends Model implements HasMedia
     public function getPreviewUrl(): ?string
     {
         $media = $this->getFile();
-        if (!$media) {
+        if (! $media) {
             return null;
         }
 
@@ -486,6 +480,7 @@ class Document extends Model implements HasMedia
      * Format file size for human-readable display.
      *
      * @param int $bytes File size in bytes
+     *
      * @return string Formatted size (e.g., "1.5 MB")
      */
     protected function formatFileSize(int $bytes): string
@@ -511,6 +506,7 @@ class Document extends Model implements HasMedia
      * Get human-readable label for a document type.
      *
      * @param string $type Document type constant
+     *
      * @return string Human-readable label
      */
     public static function getTypeLabel(string $type): string

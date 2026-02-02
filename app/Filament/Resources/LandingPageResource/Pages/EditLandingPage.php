@@ -17,7 +17,7 @@ class EditLandingPage extends EditRecord
         return [
             Actions\Action::make('preview')
                 ->icon('heroicon-o-eye')
-                ->url(fn () => "/lp/{$this->record->slug}")
+                ->url(fn () => "/lp/{$this->getRecord()->slug}")
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];

@@ -1,10 +1,8 @@
 <?php
 
 /**
- * BrandCall - Branded Caller ID SaaS Platform
+ * BrandCall - Branded Caller ID SaaS Platform.
  *
- * @package    BrandCall
- * @subpackage Contracts
  * @author     BrandCall Development Team
  * @copyright  2024-2026 BrandCall
  * @license    Proprietary
@@ -82,21 +80,21 @@ interface VoiceProvider
      * 4. Initiate call via provider API
      * 5. Return call identifier for tracking
      *
-     * @param Brand       $brand      The brand making the call (contains display info)
-     * @param string      $from       Originating phone number (E.164 format, must be registered)
-     * @param string      $to         Destination phone number (E.164 format)
-     * @param string|null $callReason Optional call reason/purpose to display on device
-     * @param array<string, mixed> $options Additional provider-specific options:
-     *                              - 'attestation': STIR/SHAKEN level (A, B, C)
-     *                              - 'callback_url': Webhook for call events
-     *                              - 'record': bool to enable recording
-     *                              - 'timeout': Ring timeout in seconds
+     * @param Brand                $brand      The brand making the call (contains display info)
+     * @param string               $from       Originating phone number (E.164 format, must be registered)
+     * @param string               $to         Destination phone number (E.164 format)
+     * @param string|null          $callReason Optional call reason/purpose to display on device
+     * @param array<string, mixed> $options    Additional provider-specific options:
+     *                                         - 'attestation': STIR/SHAKEN level (A, B, C)
+     *                                         - 'callback_url': Webhook for call events
+     *                                         - 'record': bool to enable recording
+     *                                         - 'timeout': Ring timeout in seconds
      *
      * @return array{success: bool, call_sid?: string, status?: string, error?: string}
-     *         - success: Whether call was initiated
-     *         - call_sid: Provider's unique call identifier
-     *         - status: Initial call status
-     *         - error: Error message if failed
+     *                                                                                  - success: Whether call was initiated
+     *                                                                                  - call_sid: Provider's unique call identifier
+     *                                                                                  - status: Initial call status
+     *                                                                                  - error: Error message if failed
      */
     public function call(
         Brand $brand,
@@ -125,10 +123,10 @@ interface VoiceProvider
      * @param string $callSid The provider's unique call identifier
      *
      * @return array{success: bool, status?: string, duration?: int, error?: string}
-     *         - success: Whether status was retrieved
-     *         - status: Current call status
-     *         - duration: Call duration in seconds (if completed)
-     *         - error: Error message if failed
+     *                                                                               - success: Whether status was retrieved
+     *                                                                               - status: Current call status
+     *                                                                               - duration: Call duration in seconds (if completed)
+     *                                                                               - error: Error message if failed
      */
     public function getCallStatus(string $callSid): array;
 
@@ -143,8 +141,8 @@ interface VoiceProvider
      * @param string $callSid The provider's unique call identifier
      *
      * @return array{success: bool, error?: string}
-     *         - success: Whether call was terminated
-     *         - error: Error message if failed
+     *                                              - success: Whether call was terminated
+     *                                              - error: Error message if failed
      */
     public function hangup(string $callSid): array;
 
@@ -166,9 +164,9 @@ interface VoiceProvider
      * @param Brand $brand The brand to register
      *
      * @return array{success: bool, provider_id?: string, error?: string}
-     *         - success: Whether registration succeeded
-     *         - provider_id: Provider's unique brand identifier
-     *         - error: Error message if failed
+     *                                                                    - success: Whether registration succeeded
+     *                                                                    - provider_id: Provider's unique brand identifier
+     *                                                                    - error: Error message if failed
      */
     public function registerBrand(Brand $brand): array;
 
@@ -188,8 +186,8 @@ interface VoiceProvider
      * @param BrandPhoneNumber $phoneNumber The phone number to register
      *
      * @return array{success: bool, error?: string}
-     *         - success: Whether registration succeeded
-     *         - error: Error message if failed
+     *                                              - success: Whether registration succeeded
+     *                                              - error: Error message if failed
      */
     public function registerNumber(BrandPhoneNumber $phoneNumber): array;
 
@@ -209,8 +207,8 @@ interface VoiceProvider
      * @param string $callerName  Caller name (max 15 chars recommended)
      *
      * @return array{success: bool, error?: string}
-     *         - success: Whether update was accepted
-     *         - error: Error message if failed
+     *                                              - success: Whether update was accepted
+     *                                              - error: Error message if failed
      */
     public function updateCnam(string $phoneNumber, string $callerName): array;
 
@@ -226,9 +224,9 @@ interface VoiceProvider
      * - Public key verification
      * - Token validation
      *
-     * @param string $payload   Raw webhook request body
-     * @param string $signature Signature from request header
-     * @param array<string, string> $headers All request headers (some providers need multiple)
+     * @param string                $payload   Raw webhook request body
+     * @param string                $signature Signature from request header
+     * @param array<string, string> $headers   All request headers (some providers need multiple)
      *
      * @return bool True if webhook is valid and trusted
      */
@@ -243,10 +241,10 @@ interface VoiceProvider
      * - Select appropriate provider for a use case
      *
      * @return array{stir_shaken: bool, cnam: bool, rich_call_data: bool, number_purchase: bool}
-     *         - stir_shaken: Supports STIR/SHAKEN attestation
-     *         - cnam: Supports CNAM (Caller Name) updates
-     *         - rich_call_data: Supports RCD (logo, call reason)
-     *         - number_purchase: Can provision new phone numbers
+     *                                                                                           - stir_shaken: Supports STIR/SHAKEN attestation
+     *                                                                                           - cnam: Supports CNAM (Caller Name) updates
+     *                                                                                           - rich_call_data: Supports RCD (logo, call reason)
+     *                                                                                           - number_purchase: Can provision new phone numbers
      */
     public function features(): array;
 }

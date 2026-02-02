@@ -42,8 +42,8 @@ class DocumentsRelationManager extends RelationManager
                     ->label('')
                     ->width(50)
                     ->height(50)
-                    ->defaultImageUrl(fn (Document $record) => $record->getMetadata()['is_pdf'] 
-                        ? 'https://cdn-icons-png.flaticon.com/512/337/337946.png' 
+                    ->defaultImageUrl(fn (Document $record) => $record->getMetadata()['is_pdf']
+                        ? 'https://cdn-icons-png.flaticon.com/512/337/337946.png'
                         : null)
                     ->getStateUsing(fn (Document $record) => $record->getThumbnailUrl())
                     ->circular(false),
