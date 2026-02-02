@@ -10,21 +10,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Lead submission from a landing page.
  *
- * @property int $id
- * @property int $landing_page_id
+ * @property int         $id
+ * @property int         $landing_page_id
  * @property string|null $name
- * @property string $email
+ * @property string      $email
  * @property string|null $phone
  * @property string|null $company
  * @property string|null $message
- * @property array|null $custom_fields
+ * @property array|null  $custom_fields
  * @property string|null $ip_address
  * @property string|null $user_agent
  * @property string|null $referrer
  * @property string|null $utm_source
  * @property string|null $utm_medium
  * @property string|null $utm_campaign
- * @property string $status
+ * @property string      $status
  * @property string|null $notes
  */
 class LandingPageLead extends Model
@@ -52,9 +52,13 @@ class LandingPageLead extends Model
     ];
 
     public const STATUS_NEW = 'new';
+
     public const STATUS_CONTACTED = 'contacted';
+
     public const STATUS_QUALIFIED = 'qualified';
+
     public const STATUS_CONVERTED = 'converted';
+
     public const STATUS_CLOSED = 'closed';
 
     public const STATUSES = [

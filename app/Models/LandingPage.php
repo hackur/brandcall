@@ -10,27 +10,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Landing page with customizable content, colors, and layouts.
  *
- * @property int $id
- * @property string $slug
- * @property string $name
- * @property bool $is_active
- * @property string $headline
+ * @property int         $id
+ * @property string      $slug
+ * @property string      $name
+ * @property bool        $is_active
+ * @property string      $headline
  * @property string|null $subheadline
  * @property string|null $description
- * @property string $cta_text
+ * @property string      $cta_text
  * @property string|null $cta_url
  * @property string|null $hero_image
  * @property string|null $hero_video_url
- * @property array|null $features
- * @property array|null $testimonials
- * @property bool $show_pricing
+ * @property array|null  $features
+ * @property array|null  $testimonials
+ * @property bool        $show_pricing
  * @property string|null $pricing_headline
- * @property bool $show_contact_form
- * @property string $form_headline
- * @property array|null $form_fields
- * @property string $layout_preset
- * @property string $color_scheme
- * @property array|null $custom_colors
+ * @property bool        $show_contact_form
+ * @property string      $form_headline
+ * @property array|null  $form_fields
+ * @property string      $layout_preset
+ * @property string      $color_scheme
+ * @property array|null  $custom_colors
  * @property string|null $logo_url
  * @property string|null $favicon_url
  * @property string|null $meta_title
@@ -39,8 +39,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $utm_source
  * @property string|null $utm_medium
  * @property string|null $utm_campaign
- * @property int $view_count
- * @property int $conversion_count
+ * @property int         $view_count
+ * @property int         $conversion_count
  */
 class LandingPage extends Model
 {

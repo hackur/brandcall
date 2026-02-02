@@ -20,7 +20,7 @@ class LandingPageController extends Controller
     {
         $page = LandingPage::findBySlug($slug);
 
-        if (!$page) {
+        if (! $page) {
             abort(404);
         }
 
@@ -64,13 +64,13 @@ class LandingPageController extends Controller
     {
         $page = LandingPage::findBySlug($slug);
 
-        if (!$page) {
+        if (! $page) {
             return response()->json(['error' => 'Page not found'], 404);
         }
 
         // Validate based on form fields
         $rules = ['email' => 'required|email'];
-        
+
         foreach ($page->getFormFieldsWithDefaults() as $field) {
             if ($field['required'] ?? false) {
                 $fieldName = $field['name'];

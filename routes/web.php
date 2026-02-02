@@ -6,6 +6,8 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +59,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | See: app/Providers/Filament/AdminPanelProvider.php
 | Access controlled by User::canAccessPanel() which checks for super-admin role
 */
+
+/*
+|--------------------------------------------------------------------------
+| Health Check Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+    Route::get('/health', HealthCheckResultsController::class)->name('health');
+    Route::get('/health/json', HealthCheckJsonResultsController::class)->name('health.json');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Pulse Dashboard (Monitoring)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'can:viewPulse'])->prefix('pulse')->group(function () {
+    Route::get('/', function () {
+        return view('vendor.pulse.dashboard');
+    })->name('pulse');
+});
 
 /*
 |--------------------------------------------------------------------------
