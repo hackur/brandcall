@@ -74,12 +74,12 @@ set('writable_mode', 'chmod');
 set('writable_chmod_mode', '0775');
 set('writable_chmod_recursive', true);
 
-// Hosts
+// Hosts - supports env vars for CI/CD or falls back to defaults
 host('production')
-    ->set('hostname', '178.156.223.166')
-    ->set('remote_user', 'root')
-    ->set('deploy_path', '/var/www/brandcall')
-    ->set('identity_file', '~/.ssh/id_rsa');
+    ->set('hostname', getenv('DEPLOYER_HOST') ?: '178.156.223.166')
+    ->set('remote_user', getenv('DEPLOYER_USER') ?: 'root')
+    ->set('deploy_path', getenv('DEPLOYER_PATH') ?: '/var/www/brandcall')
+    ->set('identity_file', getenv('DEPLOYER_KEY') ?: '~/.ssh/id_rsa');
 
 // Build frontend assets locally before deploy
 task('build', function () {
