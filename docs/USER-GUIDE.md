@@ -214,7 +214,7 @@ Authorization: Bearer bci_xxxxxxxxxxxxx
 ### Making a Branded Call
 
 ```bash
-curl -X POST https://api.brandcall.com/v1/brands/{brand_slug}/calls \
+curl -X POST https://api.brandcall.io/v1/brands/{brand_slug}/calls \
   -H "Authorization: Bearer {api_key}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -291,7 +291,7 @@ For development and testing:
 
 | Email | Password | Role | Tenant |
 |-------|----------|------|--------|
-| admin@brandcall.com | password | super-admin | None (Platform) |
+| admin@brandcall.io | password | super-admin | None (Platform) |
 | owner@example.com | password | owner | Demo Insurance Company |
 | admin@example.com | password | admin | Demo Insurance Company |
 | member@example.com | password | member | Demo Insurance Company |

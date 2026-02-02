@@ -396,10 +396,10 @@ PULSE_ENABLED=true
 
 # Backup
 BACKUP_DISK=local
-BACKUP_NOTIFICATION_EMAIL=admin@brandcall.com
+BACKUP_NOTIFICATION_EMAIL=admin@brandcall.io
 
 # Health notifications
-HEALTH_NOTIFICATION_EMAIL=admin@brandcall.com
+HEALTH_NOTIFICATION_EMAIL=admin@brandcall.io
 ```
 
 ---

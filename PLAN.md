@@ -425,7 +425,7 @@ brandcall/
 ```env
 # App
 APP_NAME=BrandCall
-APP_URL=https://brandcall.com
+APP_URL=https://brandcall.io
 
 # Database
 DB_CONNECTION=pgsql

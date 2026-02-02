@@ -73,7 +73,7 @@ class BrandResource extends Resource
                             ->required()
                             ->native(false),
                         Forms\Components\TextInput::make('numhub_brand_id')
-                            ->label('NumHub Brand ID')
+                            ->label('Provider Brand ID')
                             ->disabled()
                             ->dehydrated(false),
                         Forms\Components\TextInput::make('api_key')

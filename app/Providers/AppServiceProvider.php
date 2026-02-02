@@ -35,12 +35,12 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
-            return $request->user()?->email === 'admin@brandcall.com';
+            return $request->user()?->email === 'admin@brandcall.io';
         });
 
         // Pulse authorization
         Gate::define('viewPulse', function ($user) {
-            return $user->email === 'admin@brandcall.com';
+            return $user->email === 'admin@brandcall.io';
         });
 
         // Pulse user resolution

@@ -12,7 +12,7 @@ Branded Caller ID SaaS platform - displays business name/logo on outbound calls 
 
 | Domain | Status | Notes |
 |--------|--------|-------|
-| brandcall.com | ❌ Taken | Premium - could inquire about purchase |
+| brandcall.io | ❌ Taken | Premium - could inquire about purchase |
 | brandcall.io | ✅ Available | Strong tech brand, ~$50/yr |
 | brandcall.co | ✅ Available | Short, clean, ~$30/yr |
 | brandcall.app | ⚠️ Check | Good for SaaS |
@@ -45,7 +45,7 @@ Branded Caller ID SaaS platform - displays business name/logo on outbound calls 
 
 1. **BrandCall** (current)
    - Pros: Clear, descriptive, professional
-   - Cons: Generic, brandcall.com taken
+   - Cons: Generic, brandcall.io taken
    - Domain: brandcall.io or brandcall.co
 
 2. **TrueRing**

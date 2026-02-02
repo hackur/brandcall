@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null    $call_reason     Default call intent/reason
  * @property string|null    $logo_path       Path to uploaded logo file
  * @property string         $status          Brand status (draft|pending_vetting|active|suspended)
- * @property string|null    $numhub_brand_id External NumHub brand identifier
+ * @property string|null    $numhub_brand_id External provider brand identifier
  * @property string         $api_key         Unique API key for this brand
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -75,6 +75,7 @@ class Brand extends Model
      */
     protected $hidden = [
         'api_key',
+        'numhub_brand_id', // Internal supplier reference - not exposed publicly
     ];
 
     /**

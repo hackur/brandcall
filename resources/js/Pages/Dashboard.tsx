@@ -227,7 +227,7 @@ export default function Dashboard({ auth, stats, recentBrands }: DashboardProps)
                         </p>
                         <div className="mt-4 rounded-lg bg-gray-900 p-4">
                             <pre className="overflow-x-auto text-sm text-green-400">
-{`curl -X POST https://api.brandcall.com/v1/brands/{brand_slug}/calls \\
+{`curl -X POST https://api.brandcall.io/v1/brands/{brand_slug}/calls \\
   -H "Authorization: Bearer {api_key}" \\
   -H "Content-Type: application/json" \\
   -d '{

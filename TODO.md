@@ -221,7 +221,7 @@ composer test         # Run all tests
 php artisan migrate:fresh --seed
 
 # Test Users
-# admin@brandcall.com (super-admin) — password
+# admin@brandcall.io (super-admin) — password
 # owner@example.com (owner) — password
 ```
 

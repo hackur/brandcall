@@ -14,7 +14,7 @@ class InitialUsersSeeder extends Seeder
     {
         // Create Super Admin User (no tenant - platform admin)
         $admin = User::updateOrCreate(
-            ['email' => 'admin@brandcall.com'],
+            ['email' => 'admin@brandcall.io'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),
@@ -23,7 +23,7 @@ class InitialUsersSeeder extends Seeder
         );
         $admin->assignRole('super-admin');
 
-        $this->command->info('Super Admin created: admin@brandcall.com / password');
+        $this->command->info('Super Admin created: admin@brandcall.io / password');
 
         // Create Demo Tenant
         $demoTenant = Tenant::updateOrCreate(

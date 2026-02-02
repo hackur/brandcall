@@ -145,7 +145,7 @@ All passwords: `password`
 
 | Email | Role | Access |
 |-------|------|--------|
-| admin@brandcall.com | super-admin | Filament admin panel |
+| admin@brandcall.io | super-admin | Filament admin panel |
 | owner@example.com | owner | Customer dashboard (tenant owner) |
 | admin@example.com | admin | Customer dashboard (tenant admin) |
 | member@example.com | member | Customer dashboard (limited) |

@@ -1,10 +1,61 @@
 # BrandCall Deployment Guide
 
-> CI/CD with GitHub Actions + Envoyer
+> CI/CD with GitHub Actions + Envoyer (or manual rsync)
 
 ---
 
-## Architecture Overview
+## Quick Deploy (Current Setup)
+
+Until Envoyer is configured, deploy manually:
+
+```bash
+# 1. Build frontend assets locally
+npm run build
+
+# 2. Rsync to server (excludes vendor, node_modules, .env)
+rsync -avz --delete \
+  --exclude='.git' \
+  --exclude='node_modules' \
+  --exclude='vendor' \
+  --exclude='.env' \
+  --exclude='storage/logs/*' \
+  --exclude='storage/framework/cache/*' \
+  --exclude='storage/framework/sessions/*' \
+  --exclude='storage/framework/views/*' \
+  --exclude='bootstrap/cache/*' \
+  -e "ssh -i ~/.ssh/id_rsa" \
+  . root@178.156.223.166:/var/www/brandcall/
+
+# 3. Server-side: install dependencies + migrate + clear cache
+ssh -i ~/.ssh/id_rsa root@178.156.223.166 "cd /var/www/brandcall && \
+  composer install --no-interaction --optimize-autoloader --no-dev && \
+  php artisan migrate --force && \
+  php artisan config:clear && \
+  php artisan cache:clear && \
+  php artisan view:clear"
+```
+
+### One-Liner (All Steps)
+
+```bash
+cd /Volumes/JS-DEV/brandcall && \
+npm run build && \
+rsync -avz --delete \
+  --exclude='.git' --exclude='node_modules' --exclude='vendor' --exclude='.env' \
+  --exclude='storage/logs/*' --exclude='storage/framework/cache/*' \
+  --exclude='storage/framework/sessions/*' --exclude='storage/framework/views/*' \
+  --exclude='bootstrap/cache/*' \
+  -e "ssh -i ~/.ssh/id_rsa" \
+  . root@178.156.223.166:/var/www/brandcall/ && \
+ssh -i ~/.ssh/id_rsa root@178.156.223.166 "cd /var/www/brandcall && \
+  composer install --no-interaction --optimize-autoloader --no-dev && \
+  php artisan migrate --force && \
+  php artisan config:clear && php artisan cache:clear && php artisan view:clear"
+```
+
+---
+
+## Architecture Overview (Future: Envoyer)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -326,6 +377,32 @@ Edit via:
 - Server SSH uses key-based auth only
 - `.env` file is not in Git
 - Secrets stored in GitHub Secrets + Envoyer Environment
+
+---
+
+## Server Information
+
+| Property | Value |
+|----------|-------|
+| **IP** | 178.156.223.166 |
+| **Hostname** | brandcall-web |
+| **Provider** | Hetzner Cloud (CPX21) |
+| **Location** | Ashburn, VA (us-east) |
+| **OS** | Ubuntu 24.04 LTS |
+| **PHP** | 8.4 |
+| **Database** | MariaDB 10.11 |
+| **Web Server** | Nginx 1.24 |
+| **Node.js** | 22 |
+| **Web Root** | `/var/www/brandcall/public` |
+| **SSH** | `ssh -i ~/.ssh/id_rsa root@178.156.223.166` |
+
+### Database Credentials
+
+```
+DB_DATABASE=brandcall
+DB_USERNAME=brandcall
+DB_PASSWORD=BrandCall2026Secure!
+```
 
 ---
 

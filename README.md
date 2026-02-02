@@ -7,7 +7,7 @@ Built with Laravel 12, Inertia.js, React, TypeScript, and Filament.
 ## Features
 
 - **Branded Calling**: Display business name, logo, and call reason
-- **STIR/SHAKEN Compliant**: FCC-mandated call authentication via NumHub
+- **STIR/SHAKEN Compliant**: FCC-mandated call authentication
 - **Multi-tenant Architecture**: Row-level security for customer isolation
 - **Rich Call Data (RCD)**: Enhanced caller ID on supported devices
 - **Volume-based Pricing**: Automatic tier discounts ($0.075 → $0.025)
@@ -23,7 +23,7 @@ Built with Laravel 12, Inertia.js, React, TypeScript, and Filament.
 | SPA Bridge | Inertia.js |
 | Auth | Laravel Sanctum, Spatie Permission |
 | Database | SQLite (dev), MySQL/PostgreSQL (prod) |
-| API | NumHub BrandControl |
+| API | Voice Provider (pluggable) |
 
 ## Requirements
 
@@ -141,7 +141,7 @@ app/
 │   └── Middleware/     # Request middleware
 ├── Models/             # Eloquent models
 ├── Scopes/             # Query scopes (TenantScope)
-└── Services/           # Business logic (NumHub, etc.)
+└── Services/           # Business logic (Voice providers, etc.)
 
 resources/
 ├── js/
@@ -157,14 +157,14 @@ docs/
 
 ## Configuration
 
-### NumHub Integration
+### Voice Provider
 
 Set in `.env`:
 
 ```env
-NUMHUB_API_KEY=your_api_key
-NUMHUB_API_SECRET=your_api_secret
-NUMHUB_ENVIRONMENT=sandbox  # or production
+VOICE_DRIVER=numhub  # or telnyx, twilio
+VOICE_API_KEY=your_api_key
+VOICE_API_SECRET=your_api_secret
 ```
 
 ### Stripe Billing

@@ -2,7 +2,7 @@
 
 Complete REST API documentation for integrating with BrandCall's branded caller ID platform.
 
-**Base URL:** `https://api.brandcall.com/v1`
+**Base URL:** `https://api.brandcall.io/v1`
 
 **API Version:** v1
 
@@ -51,7 +51,7 @@ Authorization: Bearer bci_your_api_key_here
 ### Example Request
 
 ```bash
-curl -X GET "https://api.brandcall.com/v1/brands" \
+curl -X GET "https://api.brandcall.io/v1/brands" \
   -H "Authorization: Bearer bci_a1b2c3d4e5f6..." \
   -H "Content-Type: application/json" \
   -H "Accept: application/json"
@@ -79,7 +79,7 @@ Manage branded caller ID profiles.
   "name": "ACME Corporation",
   "display_name": "ACME Corp",
   "call_reason": "Appointment Reminder",
-  "logo_url": "https://api.brandcall.com/storage/logos/acme-corp.png",
+  "logo_url": "https://api.brandcall.io/storage/logos/acme-corp.png",
   "status": "active",
   "phone_numbers_count": 5,
   "created_at": "2026-01-15T10:30:00Z",
@@ -126,7 +126,7 @@ GET /api/v1/brands
       "name": "ACME Corporation",
       "display_name": "ACME Corp",
       "call_reason": "Appointment Reminder",
-      "logo_url": "https://api.brandcall.com/storage/logos/acme-corp.png",
+      "logo_url": "https://api.brandcall.io/storage/logos/acme-corp.png",
       "status": "active",
       "phone_numbers_count": 5,
       "created_at": "2026-01-15T10:30:00Z",
@@ -140,8 +140,8 @@ GET /api/v1/brands
     "last_page": 1
   },
   "links": {
-    "first": "https://api.brandcall.com/v1/brands?page=1",
-    "last": "https://api.brandcall.com/v1/brands?page=1",
+    "first": "https://api.brandcall.io/v1/brands?page=1",
+    "last": "https://api.brandcall.io/v1/brands?page=1",
     "prev": null,
     "next": null
   }
@@ -174,7 +174,7 @@ GET /api/v1/brands/{slug}
     "name": "ACME Corporation",
     "display_name": "ACME Corp",
     "call_reason": "Appointment Reminder",
-    "logo_url": "https://api.brandcall.com/storage/logos/acme-corp.png",
+    "logo_url": "https://api.brandcall.io/storage/logos/acme-corp.png",
     "status": "active",
     "phone_numbers": [
       {
@@ -366,10 +366,10 @@ GET /api/v1/brands/{slug}/calls
     "last_page": 62
   },
   "links": {
-    "first": "https://api.brandcall.com/v1/brands/acme-corp/calls?page=1",
-    "last": "https://api.brandcall.com/v1/brands/acme-corp/calls?page=62",
+    "first": "https://api.brandcall.io/v1/brands/acme-corp/calls?page=1",
+    "last": "https://api.brandcall.io/v1/brands/acme-corp/calls?page=62",
     "prev": null,
-    "next": "https://api.brandcall.com/v1/brands/acme-corp/calls?page=2"
+    "next": "https://api.brandcall.io/v1/brands/acme-corp/calls?page=2"
   }
 }
 ```
@@ -408,7 +408,7 @@ GET /api/v1/brands/{slug}/calls/{id}
     "branded_call": true,
     "rcd_payload": {
       "display_name": "ACME Corp",
-      "logo_url": "https://cdn.brandcall.com/logos/acme.png",
+      "logo_url": "https://cdn.brandcall.io/logos/acme.png",
       "call_reason": "Appointment Reminder"
     },
     "call_initiated_at": "2026-01-20T14:30:00Z",
@@ -844,7 +844,7 @@ Retry-After: 30
 #### List Brands
 
 ```bash
-curl -X GET "https://api.brandcall.com/v1/brands" \
+curl -X GET "https://api.brandcall.io/v1/brands" \
   -H "Authorization: Bearer bci_your_api_key" \
   -H "Accept: application/json"
 ```
@@ -852,7 +852,7 @@ curl -X GET "https://api.brandcall.com/v1/brands" \
 #### Initiate Call
 
 ```bash
-curl -X POST "https://api.brandcall.com/v1/brands/acme-corp/calls" \
+curl -X POST "https://api.brandcall.io/v1/brands/acme-corp/calls" \
   -H "Authorization: Bearer bci_your_api_key" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
@@ -866,7 +866,7 @@ curl -X POST "https://api.brandcall.com/v1/brands/acme-corp/calls" \
 #### Get Call Details
 
 ```bash
-curl -X GET "https://api.brandcall.com/v1/brands/acme-corp/calls/call_8f7e6d5c4b3a2901" \
+curl -X GET "https://api.brandcall.io/v1/brands/acme-corp/calls/call_8f7e6d5c4b3a2901" \
   -H "Authorization: Bearer bci_your_api_key" \
   -H "Accept: application/json"
 ```
@@ -1138,7 +1138,7 @@ import requests
 from typing import Optional
 
 class BrandCallClient:
-    def __init__(self, api_key: str, base_url: str = "https://api.brandcall.com/v1"):
+    def __init__(self, api_key: str, base_url: str = "https://api.brandcall.io/v1"):
         self.api_key = api_key
         self.base_url = base_url
         self.session = requests.Session()
@@ -1237,9 +1237,9 @@ def verify_webhook(payload: bytes, signature: str, secret: str) -> bool:
 
 ## Support
 
-- **Documentation:** https://docs.brandcall.com
-- **API Status:** https://status.brandcall.com
-- **Support Email:** api-support@brandcall.com
+- **Documentation:** https://docs.brandcall.io
+- **API Status:** https://status.brandcall.io
+- **Support Email:** api-support@brandcall.io
 - **Developer Slack:** https://brandcall-developers.slack.com
 
 ### Request ID

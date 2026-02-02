@@ -59,7 +59,7 @@ export default function Onboarding({ auth }: PageProps) {
                                 </p>
                                 <div className="flex gap-3">
                                     <a
-                                        href="mailto:support@brandcall.com"
+                                        href="mailto:support@brandcall.io"
                                         className="flex-1 rounded-lg bg-purple-500 px-4 py-3 text-center text-sm font-medium text-white hover:bg-purple-600 transition"
                                     >
                                         Contact Sales
