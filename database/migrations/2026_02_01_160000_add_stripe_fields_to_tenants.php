@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::table('tenants', function (Blueprint $table) {
             $table->string('phone')->nullable()->after('email');
             $table->string('website')->nullable()->after('phone');
-            $table->string('stripe_subscription_id')->nullable()->after('stripe_customer_id');
-            $table->string('stripe_subscription_item_id')->nullable()->after('stripe_subscription_id');
+            // Note: stripe_subscription_id/item_id removed - using Cashier's subscriptions table instead
         });
 
         Schema::table('usage_records', function (Blueprint $table) {
@@ -30,7 +29,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tenants', function (Blueprint $table) {
-            $table->dropColumn(['phone', 'website', 'stripe_subscription_id', 'stripe_subscription_item_id']);
+            $table->dropColumn(['phone', 'website']);
         });
 
         Schema::table('usage_records', function (Blueprint $table) {

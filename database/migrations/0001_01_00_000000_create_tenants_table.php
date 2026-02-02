@@ -13,7 +13,13 @@ return new class extends Migration
             $table->string('name'); // Company name
             $table->string('email')->unique();
             $table->string('slug')->unique(); // For subdomain/API routing
-            $table->string('stripe_customer_id')->nullable();
+
+            // Stripe/Cashier billing fields
+            $table->string('stripe_id')->nullable()->index();
+            $table->string('pm_type')->nullable();
+            $table->string('pm_last_four', 4)->nullable();
+            $table->timestamp('trial_ends_at')->nullable();
+
             $table->string('subscription_tier')->default('starter'); // starter, growth, enterprise
             $table->integer('monthly_call_limit')->nullable(); // null = unlimited
             $table->boolean('analytics_monitoring_enabled')->default(false);

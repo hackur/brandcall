@@ -73,15 +73,18 @@ return [
         | Twilio Driver
         |----------------------------------------------------------------------
         |
-        | Most popular CPaaS. Has STIR/SHAKEN but limited branded calling.
-        | Good if you already use Twilio for other services.
+        | Most popular CPaaS. Has STIR/SHAKEN and Branded Calling support.
+        | Requires Twilio Branded Calling add-on (GA January 2025).
         | Sign up: https://twilio.com
+        | Docs: https://www.twilio.com/docs/voice/branded-calling
         |
         */
 
         'twilio' => [
             'account_sid' => env('TWILIO_ACCOUNT_SID'),
             'auth_token' => env('TWILIO_AUTH_TOKEN'),
+            'branded_calling_sid' => env('TWILIO_BRANDED_CALLING_SID'),
+            'webhook_auth_token' => env('TWILIO_WEBHOOK_AUTH_TOKEN'),
             'mock' => env('TWILIO_MOCK', true),
         ],
 

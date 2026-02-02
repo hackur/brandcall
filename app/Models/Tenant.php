@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Cashier\Billable;
 
 /**
  * Tenant Model - Represents a customer organization.
@@ -35,6 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Tenant extends Model
 {
+    use Billable;
     use HasFactory;
     use SoftDeletes;
 
@@ -58,9 +60,10 @@ class Tenant extends Model
         'slug',
         'phone',
         'website',
-        'stripe_customer_id',
-        'stripe_subscription_id',
-        'stripe_subscription_item_id',
+        'stripe_id',
+        'pm_type',
+        'pm_last_four',
+        'trial_ends_at',
         'subscription_tier',
         'monthly_call_limit',
         'analytics_monitoring_enabled',
