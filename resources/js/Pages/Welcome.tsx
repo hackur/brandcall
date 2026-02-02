@@ -11,6 +11,52 @@ const headlines = [
     { title: 'Rich Call Data', subtitle: 'Logo, Name & Call Reason' },
 ];
 
+const features = [
+    {
+        icon: (
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+        ),
+        title: 'STIR/SHAKEN Compliant',
+        description: 'Full attestation for legitimate business calls. Meet FCC requirements automatically.',
+    },
+    {
+        icon: (
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+            </svg>
+        ),
+        title: 'Rich Call Display',
+        description: 'Show your logo, business name, and call reason. Stand out on every device.',
+    },
+    {
+        icon: (
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+        ),
+        title: 'Higher Answer Rates',
+        description: 'Branded calls see up to 30% higher answer rates compared to unknown numbers.',
+    },
+    {
+        icon: (
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        ),
+        title: 'Number Reputation',
+        description: 'Monitor and protect your calling numbers from spam flags and blocking.',
+    },
+];
+
+const steps = [
+    { number: '01', title: 'Create Account', description: 'Sign up and verify your business in minutes.' },
+    { number: '02', title: 'Register Numbers', description: 'Add your outbound calling numbers to the platform.' },
+    { number: '03', title: 'Brand Your Calls', description: 'Upload logo, set business name and call categories.' },
+    { number: '04', title: 'Start Calling', description: 'Your branded identity displays on every outbound call.' },
+];
+
 export default function Welcome({ auth }: PageProps) {
     const [currentHeadline, setCurrentHeadline] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -33,13 +79,13 @@ export default function Welcome({ auth }: PageProps) {
             {/* Animated Background */}
             <div className="relative min-h-screen overflow-hidden">
                 {/* Base gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
+                <div className="absolute inset-0 bg-gradient-hero" />
                 
                 {/* Animated gradient orbs */}
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="animate-blob absolute -left-40 -top-40 h-96 w-96 rounded-full bg-purple-600/20 mix-blend-screen blur-3xl filter" />
-                    <div className="animate-blob animation-delay-2000 absolute -right-40 top-20 h-96 w-96 rounded-full bg-indigo-600/20 mix-blend-screen blur-3xl filter" />
-                    <div className="animate-blob animation-delay-4000 absolute -bottom-40 left-1/2 h-96 w-96 rounded-full bg-violet-600/20 mix-blend-screen blur-3xl filter" />
+                    <div className="animate-blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-brand-600/20 mix-blend-screen blur-3xl filter" />
+                    <div className="animate-blob animation-delay-2000 absolute -right-40 top-20 h-[500px] w-[500px] rounded-full bg-purple-600/15 mix-blend-screen blur-3xl filter" />
+                    <div className="animate-blob animation-delay-4000 absolute -bottom-40 left-1/2 h-[500px] w-[500px] rounded-full bg-violet-600/15 mix-blend-screen blur-3xl filter" />
                 </div>
                 
                 {/* Subtle grid pattern */}
@@ -53,36 +99,33 @@ export default function Welcome({ auth }: PageProps) {
                 {/* Content */}
                 <div className="relative z-10">
                     {/* Navigation */}
-                    <nav className="px-6 py-4">
-                        <div className="mx-auto flex max-w-7xl items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg shadow-purple-500/25">
-                                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <nav className="px-6 py-6">
+                        <div className="container-wide flex items-center justify-between">
+                            {/* Logo */}
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand shadow-brand">
+                                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                 </div>
-                                <span className="text-xl font-bold text-white">BrandCall</span>
+                                <span className="text-xl font-bold text-white font-heading">BrandCall</span>
                             </div>
-                            <div className="flex items-center gap-4">
+
+                            {/* Nav Links */}
+                            <div className="flex items-center gap-6">
                                 {auth.user ? (
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition hover:shadow-purple-500/40"
-                                    >
+                                    <Link href={route('dashboard')} className="btn-primary btn-sm">
                                         Dashboard
                                     </Link>
                                 ) : (
                                     <>
                                         <Link
                                             href={route('login')}
-                                            className="text-sm font-medium text-gray-300 transition hover:text-white"
+                                            className="text-sm font-medium text-slate-400 transition-colors hover:text-white"
                                         >
                                             Log in
                                         </Link>
-                                        <Link
-                                            href={route('register')}
-                                            className="rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition hover:shadow-purple-500/40"
-                                        >
+                                        <Link href={route('register')} className="btn-primary btn-sm">
                                             Get Started
                                         </Link>
                                     </>
@@ -91,214 +134,200 @@ export default function Welcome({ auth }: PageProps) {
                         </div>
                     </nav>
 
-                    {/* Hero Section with Carousel */}
-                    <main className="px-6 py-20 lg:py-32">
-                        <div className="mx-auto max-w-7xl">
+                    {/* Hero Section */}
+                    <main className="section-lg">
+                        <div className="container-wide">
                             <div className="text-center">
+                                {/* Eyebrow */}
+                                <p className="text-overline mb-6 animate-fade-in">
+                                    Trusted by 500+ Businesses
+                                </p>
+
                                 {/* Rotating Headlines */}
-                                <div className="relative h-40 sm:h-48">
+                                <div className="relative h-40 sm:h-48 mb-8">
                                     <h1 
-                                        className={`absolute inset-x-0 text-5xl font-bold tracking-tight text-white transition-all duration-500 sm:text-6xl lg:text-7xl ${
-                                            isTransitioning ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'
+                                        className={`text-display text-balance absolute inset-x-0 transition-all duration-500 ${
+                                            isTransitioning 
+                                                ? 'opacity-0 translate-y-4' 
+                                                : 'opacity-100 translate-y-0'
                                         }`}
                                     >
-                                        {headlines[currentHeadline].title}
-                                        <span className="mt-2 block bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent">
-                                            {headlines[currentHeadline].subtitle}
-                                        </span>
+                                        <span className="text-gradient">{headlines[currentHeadline].title}</span>
+                                        <br />
+                                        <span className="text-white">{headlines[currentHeadline].subtitle}</span>
                                     </h1>
                                 </div>
 
+                                {/* Subheadline */}
+                                <p className="lead max-w-2xl mx-auto mb-10 animate-fade-in animation-delay-200">
+                                    Display your business name, logo, and call reason on every outbound call. 
+                                    Build trust before they even answer.
+                                </p>
+
+                                {/* CTAs */}
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in animation-delay-400">
+                                    <Link href={route('register')} className="btn-primary btn-lg">
+                                        Start Free Trial
+                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        </svg>
+                                    </Link>
+                                    <button className="btn-secondary btn-lg">
+                                        Watch Demo
+                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+
                                 {/* Headline indicators */}
-                                <div className="mt-4 flex items-center justify-center gap-2">
+                                <div className="flex justify-center gap-2 mt-12">
                                     {headlines.map((_, index) => (
                                         <button
                                             key={index}
-                                            onClick={() => {
-                                                setIsTransitioning(true);
-                                                setTimeout(() => {
-                                                    setCurrentHeadline(index);
-                                                    setIsTransitioning(false);
-                                                }, 300);
-                                            }}
+                                            onClick={() => setCurrentHeadline(index)}
                                             className={`h-1.5 rounded-full transition-all duration-300 ${
                                                 index === currentHeadline 
-                                                    ? 'w-8 bg-purple-500' 
-                                                    : 'w-1.5 bg-gray-600 hover:bg-gray-500'
+                                                    ? 'w-8 bg-brand-500' 
+                                                    : 'w-1.5 bg-slate-700 hover:bg-slate-600'
                                             }`}
                                         />
                                     ))}
                                 </div>
-
-                                <p className="mx-auto mt-8 max-w-2xl text-lg text-gray-400">
-                                    Display your company name, logo, and call reason on outbound calls. 
-                                    Increase answer rates by up to 30% with STIR/SHAKEN compliant branded calling.
-                                </p>
-                                
-                                <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                                    <Link
-                                        href={route('register')}
-                                        className="group relative inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-purple-500/25 transition-all hover:shadow-purple-500/40"
-                                    >
-                                        <span>Start Free Trial</span>
-                                        <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                        </svg>
-                                    </Link>
-                                    <a
-                                        href="#pricing"
-                                        className="inline-flex items-center gap-2 rounded-xl border border-gray-700 bg-white/5 px-8 py-4 text-lg font-semibold text-gray-300 backdrop-blur transition hover:border-gray-600 hover:bg-white/10 hover:text-white"
-                                    >
-                                        View Pricing
-                                    </a>
-                                </div>
-
-                                {/* Trust badges */}
-                                <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-gray-500">
-                                    <div className="flex items-center gap-2">
-                                        <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>STIR/SHAKEN Compliant</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>All Major US Carriers</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>No Setup Fees</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Features */}
-                            <div className="mt-32 grid gap-6 md:grid-cols-3">
-                                {[
-                                    {
-                                        icon: (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        ),
-                                        title: 'STIR/SHAKEN Compliant',
-                                        description: 'FCC-mandated attestation ensures your calls are verified and trusted by carriers.',
-                                    },
-                                    {
-                                        icon: (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        ),
-                                        title: 'Rich Call Data',
-                                        description: 'Display your logo, brand name, and call reason directly on the recipient\'s phone.',
-                                    },
-                                    {
-                                        icon: (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                        ),
-                                        title: 'Higher Answer Rates',
-                                        description: 'Customers are 30% more likely to answer when they see who\'s calling.',
-                                    },
-                                ].map((feature, index) => (
-                                    <div 
-                                        key={index}
-                                        className="group relative rounded-2xl border border-gray-800 bg-gradient-to-b from-gray-900/50 to-gray-900/30 p-8 backdrop-blur transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10"
-                                    >
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 ring-1 ring-purple-500/30">
-                                            <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                {feature.icon}
-                                            </svg>
-                                        </div>
-                                        <h3 className="mt-4 text-xl font-semibold text-white">{feature.title}</h3>
-                                        <p className="mt-2 text-gray-400">{feature.description}</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Pricing */}
-                            <div id="pricing" className="mt-32 scroll-mt-20">
-                                <div className="text-center">
-                                    <h2 className="text-3xl font-bold text-white sm:text-4xl">Simple, Usage-Based Pricing</h2>
-                                    <p className="mx-auto mt-4 max-w-2xl text-gray-400">
-                                        Pay only for successful branded calls. Volume discounts automatically applied.
-                                    </p>
-                                </div>
-
-                                <div className="mx-auto mt-12 max-w-3xl">
-                                    <div className="overflow-hidden rounded-2xl border border-gray-800 bg-gradient-to-b from-gray-900/80 to-gray-900/60 backdrop-blur">
-                                        <table className="w-full">
-                                            <thead>
-                                                <tr className="border-b border-gray-800">
-                                                    <th className="px-8 py-4 text-left text-sm font-medium text-gray-400">Monthly Volume</th>
-                                                    <th className="px-8 py-4 text-right text-sm font-medium text-gray-400">Price per Call</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-gray-800/50">
-                                                {[
-                                                    { volume: '0 - 9,999 calls', price: '$0.075' },
-                                                    { volume: '10,000 - 99,999 calls', price: '$0.065' },
-                                                    { volume: '100,000 - 999,999 calls', price: '$0.050' },
-                                                    { volume: '1M - 9.99M calls', price: '$0.035' },
-                                                    { volume: '10M+ calls', price: '$0.025' },
-                                                ].map((tier, index) => (
-                                                    <tr key={index} className="transition hover:bg-white/5">
-                                                        <td className="px-8 py-4 text-white">{tier.volume}</td>
-                                                        <td className="px-8 py-4 text-right font-mono text-purple-400">{tier.price}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* CTA */}
-                            <div className="mt-32 text-center">
-                                <h2 className="text-3xl font-bold text-white sm:text-4xl">Ready to Build Trust?</h2>
-                                <p className="mt-4 text-gray-400">
-                                    Start displaying your brand on every outbound call today.
-                                </p>
-                                <Link
-                                    href={route('register')}
-                                    className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-purple-500/25 transition-all hover:shadow-purple-500/40"
-                                >
-                                    Create Your Account
-                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                    </svg>
-                                </Link>
                             </div>
                         </div>
                     </main>
 
+                    {/* Features Section */}
+                    <section className="section">
+                        <div className="container-wide">
+                            {/* Section Header */}
+                            <div className="text-center mb-16">
+                                <p className="text-overline mb-4">Features</p>
+                                <h2 className="text-4xl font-bold text-white mb-4">
+                                    Everything You Need to Brand Your Calls
+                                </h2>
+                                <p className="lead max-w-2xl mx-auto">
+                                    Complete caller ID branding platform with compliance built in.
+                                </p>
+                            </div>
+
+                            {/* Features Grid */}
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {features.map((feature, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="card-hover animate-fade-in-up"
+                                        style={{ animationDelay: `${index * 100}ms` }}
+                                    >
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600/10 text-brand-400 mb-4">
+                                            {feature.icon}
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-white mb-2">
+                                            {feature.title}
+                                        </h3>
+                                        <p className="text-slate-400 text-sm leading-relaxed">
+                                            {feature.description}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* How It Works Section */}
+                    <section className="section">
+                        <div className="container-wide">
+                            {/* Section Header */}
+                            <div className="text-center mb-16">
+                                <p className="text-overline mb-4">How It Works</p>
+                                <h2 className="text-4xl font-bold text-white mb-4">
+                                    Get Started in Minutes
+                                </h2>
+                                <p className="lead max-w-2xl mx-auto">
+                                    Four simple steps to branded caller ID.
+                                </p>
+                            </div>
+
+                            {/* Steps */}
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                {steps.map((step, index) => (
+                                    <div key={index} className="relative">
+                                        {/* Connector line */}
+                                        {index < steps.length - 1 && (
+                                            <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-slate-700 to-transparent" />
+                                        )}
+                                        
+                                        <div className="text-center lg:text-left">
+                                            <span className="text-5xl font-extrabold text-brand-600/20">
+                                                {step.number}
+                                            </span>
+                                            <h3 className="text-xl font-semibold text-white mt-2 mb-2">
+                                                {step.title}
+                                            </h3>
+                                            <p className="text-slate-400">
+                                                {step.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* CTA Section */}
+                    <section className="section">
+                        <div className="container-default">
+                            <div className="card-glass text-center py-16 px-8">
+                                <h2 className="text-4xl font-bold text-white mb-4">
+                                    Ready to Brand Your Calls?
+                                </h2>
+                                <p className="lead max-w-xl mx-auto mb-8">
+                                    Join hundreds of businesses already using BrandCall to improve answer rates and build trust.
+                                </p>
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                    <Link href={route('register')} className="btn-primary btn-lg">
+                                        Start Free Trial
+                                    </Link>
+                                    <Link href={route('login')} className="btn-secondary btn-lg">
+                                        Contact Sales
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     {/* Footer */}
-                    <footer className="border-t border-gray-800/50 px-6 py-12">
-                        <div className="mx-auto max-w-7xl text-center text-sm text-gray-500">
-                            <p>© 2026 BrandCall. All rights reserved.</p>
+                    <footer className="py-12 border-t border-slate-800/50">
+                        <div className="container-wide">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                {/* Logo */}
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand">
+                                        <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                        </svg>
+                                    </div>
+                                    <span className="font-semibold text-white">BrandCall</span>
+                                </div>
+
+                                {/* Links */}
+                                <div className="flex items-center gap-8 text-sm">
+                                    <a href="#" className="text-slate-400 hover:text-white transition-colors">Privacy</a>
+                                    <a href="#" className="text-slate-400 hover:text-white transition-colors">Terms</a>
+                                    <a href="#" className="text-slate-400 hover:text-white transition-colors">Support</a>
+                                </div>
+
+                                {/* Copyright */}
+                                <p className="text-sm text-slate-500">
+                                    © 2026 BrandCall. All rights reserved.
+                                </p>
+                            </div>
                         </div>
                     </footer>
                 </div>
             </div>
-
-            {/* CSS for animations */}
-            <style>{`
-                @keyframes blob {
-                    0%, 100% { transform: translate(0, 0) scale(1); }
-                    25% { transform: translate(20px, -30px) scale(1.1); }
-                    50% { transform: translate(-20px, 20px) scale(0.9); }
-                    75% { transform: translate(30px, 10px) scale(1.05); }
-                }
-                .animate-blob {
-                    animation: blob 15s infinite ease-in-out;
-                }
-                .animation-delay-2000 {
-                    animation-delay: 2s;
-                }
-                .animation-delay-4000 {
-                    animation-delay: 4s;
-                }
-            `}</style>
         </>
     );
 }

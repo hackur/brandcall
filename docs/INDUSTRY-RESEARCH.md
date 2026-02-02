@@ -781,6 +781,45 @@ Most businesses today use BOTH:
 
 ---
 
+## Video Resources & Webinars
+
+### TNS / Juniper Research: Branded Caller ID & Reputation Damage
+
+**Source:** [YouTube - Juniper Research x TNS Webinar](https://www.youtube.com/watch?v=soGHOjV96UQ)  
+**Participants:**
+- Sam Barker – VP of Telecoms Market Research, Juniper Research
+- Jim Tyrrell – VP of Enterprise Product Management, TNS
+- Shelley Dunagan – Senior Director, Direct Sales and Partnerships, TNS
+
+**Key Topics Covered:**
+1. **Industry Collaboration** — How carriers, enterprises, and solution providers are working together to address call spoofing
+2. **Standards & Protocols** — Deep dive into STIR/SHAKEN implementation and its impact on branded caller ID
+3. **Healthcare Focus** — How fostering confidence among healthcare users is key to increasing call pickup rates
+4. **Brand Reputation Damage** — How call spoofing impacts enterprise brand reputation and customer trust
+
+**Key Insight:** TNS positions branded caller ID solutions as essential for combating reputation damage caused when scammers spoof legitimate business numbers. When customers receive spoofed calls appearing to be from a trusted brand, it erodes trust even when the brand had nothing to do with the call.
+
+**Resource Link:** Full whitepaper available at [tnsi.com/enterprise-branded-calling](https://www.tnsi.com/enterprise-branded-calling)
+
+---
+
+### Gordon Marketing: TCPA Caller ID Compliance
+
+**Source:** [YouTube - Gordon Marketing](https://youtube.com/shorts/kM6VQG0Siss)  
+**Channel:** @GordonMarketing (Insurance FMO/IMO, Indianapolis)  
+**Published:** June 2025
+
+**Key Message:** Insurance agents and telemarketers cannot use *67 or any caller ID blocking on outbound calls. This constitutes a willful TCPA violation with $1,500 penalty per call.
+
+**Quote from video:**
+> "And it's a $1,500 fine if you knowingly or willfully violate the rule. So now I'm telling you about it. So now you knowingly know about it."
+>
+> "This rule says that if I use my phone to call you that I cannot block my caller ID. I cannot block my name."
+
+**Relevance to BrandCall:** Positions branded caller ID as the compliant alternative to *67 blocking. Agents who want to hide their personal number should use branded calling (shows business name) rather than blocking (illegal for telemarketing).
+
+---
+
 ## Sources
 
 - IETF RFC 8224, 8225, 8226, 8588 (STIR/SHAKEN standards)

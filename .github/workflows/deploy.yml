@@ -4,51 +4,59 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: deploy-production
   cancel-in-progress: false
 
 jobs:
-  ci:
-    name: Run CI Checks
-    uses: ./.github/workflows/ci.yml
-    secrets: inherit
-
   deploy:
     name: Deploy to Production
-    needs: ci
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    environment:
-      name: production
-      url: https://brandcall.io
-
+    
     steps:
-      - name: Trigger Envoyer Deployment
-        run: |
-          curl -X POST "${{ secrets.ENVOYER_DEPLOY_HOOK }}" \
-            -H "Content-Type: application/json" \
-            -d '{"sha": "${{ github.sha }}", "ref": "${{ github.ref }}"}'
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add host to known_hosts
+        run: ssh-keyscan -H 178.156.223.166 >> ~/.ssh/known_hosts
+
+      - name: Deploy with Deployer
+        run: vendor/bin/dep deploy production -vvv
         env:
-          ENVOYER_DEPLOY_HOOK: ${{ secrets.ENVOYER_DEPLOY_HOOK }}
+          DOT_ENV: ${{ secrets.DOT_ENV }}
 
-      - name: Notify Success
+      - name: Notify on success
         if: success()
-        run: |
-          echo "✅ Deployment triggered for commit ${{ github.sha }}"
-          echo "🚀 Check Envoyer dashboard for deployment status"
+        run: echo "✅ Deployment successful!"
 
-      - name: Notify Failure
+      - name: Notify on failure
         if: failure()
-        run: |
-          echo "❌ Deployment trigger failed"
-          exit 1
+        run: echo "❌ Deployment failed!"

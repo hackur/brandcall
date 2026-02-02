@@ -24,6 +24,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
+        "deployer/deployer": "^7.5",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/breeze": "^2.3",
@@ -74,6 +75,11 @@
             "@analyse"
         ],
         "smoke": "@php artisan test --filter=SmokeTest",
+        "deploy": "./vendor/bin/dep deploy production",
+        "deploy:unlock": "./vendor/bin/dep deploy:unlock production",
+        "rollback": "./vendor/bin/dep rollback production",
+        "releases": "./vendor/bin/dep releases production",
+        "ssh": "./vendor/bin/dep ssh production",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",

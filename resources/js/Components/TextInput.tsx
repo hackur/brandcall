@@ -11,8 +11,9 @@ export default forwardRef(function TextInput(
         type = 'text',
         className = '',
         isFocused = false,
+        hasError = false,
         ...props
-    }: InputHTMLAttributes<HTMLInputElement> & { isFocused?: boolean },
+    }: InputHTMLAttributes<HTMLInputElement> & { isFocused?: boolean; hasError?: boolean },
     ref,
 ) {
     const localRef = useRef<HTMLInputElement>(null);
@@ -31,10 +32,7 @@ export default forwardRef(function TextInput(
         <input
             {...props}
             type={type}
-            className={
-                'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ' +
-                className
-            }
+            className={`input ${hasError ? 'input-error' : ''} ${className}`}
             ref={localRef}
         />
     );

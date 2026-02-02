@@ -1,409 +1,236 @@
 # BrandCall Deployment Guide
 
-> CI/CD with GitHub Actions + Envoyer (or manual rsync)
+## Overview
+
+BrandCall uses **Deployer** for zero-downtime deployments with automatic rollback capability.
+
+### Key Features
+- ✅ Zero-downtime deployments via atomic symlink switching
+- ✅ Automatic rollbacks on failure
+- ✅ 5 release history for manual rollbacks
+- ✅ Shared storage and .env across releases
+- ✅ GitHub Actions CI/CD integration
 
 ---
 
-## Quick Deploy (Current Setup)
-
-Until Envoyer is configured, deploy manually:
+## Quick Commands
 
 ```bash
-# 1. Build frontend assets locally
-npm run build
+# Deploy to production
+composer deploy
 
-# 2. Rsync to server (excludes vendor, node_modules, .env)
-rsync -avz --delete \
-  --exclude='.git' \
-  --exclude='node_modules' \
-  --exclude='vendor' \
-  --exclude='.env' \
-  --exclude='storage/logs/*' \
-  --exclude='storage/framework/cache/*' \
-  --exclude='storage/framework/sessions/*' \
-  --exclude='storage/framework/views/*' \
-  --exclude='bootstrap/cache/*' \
-  -e "ssh -i ~/.ssh/id_rsa" \
-  . root@178.156.223.166:/var/www/brandcall/
+# Rollback to previous release
+composer rollback
 
-# 3. Server-side: install dependencies + migrate + clear cache
-ssh -i ~/.ssh/id_rsa root@178.156.223.166 "cd /var/www/brandcall && \
-  composer install --no-interaction --optimize-autoloader --no-dev && \
-  php artisan migrate --force && \
-  php artisan config:clear && \
-  php artisan cache:clear && \
-  php artisan view:clear"
-```
+# List all releases
+composer releases
 
-### One-Liner (All Steps)
+# SSH into production server
+composer ssh
 
-```bash
-cd /Volumes/JS-DEV/brandcall && \
-npm run build && \
-rsync -avz --delete \
-  --exclude='.git' --exclude='node_modules' --exclude='vendor' --exclude='.env' \
-  --exclude='storage/logs/*' --exclude='storage/framework/cache/*' \
-  --exclude='storage/framework/sessions/*' --exclude='storage/framework/views/*' \
-  --exclude='bootstrap/cache/*' \
-  -e "ssh -i ~/.ssh/id_rsa" \
-  . root@178.156.223.166:/var/www/brandcall/ && \
-ssh -i ~/.ssh/id_rsa root@178.156.223.166 "cd /var/www/brandcall && \
-  composer install --no-interaction --optimize-autoloader --no-dev && \
-  php artisan migrate --force && \
-  php artisan config:clear && php artisan cache:clear && php artisan view:clear"
+# Unlock after failed deploy
+composer deploy:unlock
 ```
 
 ---
 
-## Architecture Overview (Future: Envoyer)
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         DEPLOYMENT FLOW                             │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│   Developer        GitHub          GitHub Actions      Envoyer      │
-│                                                                     │
-│   ┌──────┐       ┌────────┐       ┌────────────┐    ┌──────────┐   │
-│   │ Push │──────▶│  main  │──────▶│   CI Jobs  │───▶│  Deploy  │   │
-│   └──────┘       └────────┘       └────────────┘    └────┬─────┘   │
-│                                         │                 │         │
-│                                    On Success        Webhook        │
-│                                         │                 │         │
-│                                    ┌────▼────┐      ┌────▼─────┐   │
-│                                    │  Lint   │      │  Server  │   │
-│                                    │  Test   │      │ Release  │   │
-│                                    │ Analyse │      │ Rollback │   │
-│                                    │ Audit   │      └──────────┘   │
-│                                    └─────────┘                      │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## GitHub Actions CI Pipeline
-
-### Jobs Run on Every Push/PR
-
-| Job | Purpose | Failure = Block Deploy |
-|-----|---------|------------------------|
-| **lint** | Laravel Pint code style | Yes |
-| **analyse** | PHPStan static analysis | Yes |
-| **security** | Composer audit for CVEs | Yes |
-| **test** | PHPUnit/Pest tests (PHP 8.2, 8.3) | Yes |
-| **build** | Verify production build works | Yes |
-
-### Trigger Deployment
-
-Deployment only triggers when:
-1. Push to `main` branch
-2. All CI jobs pass
-3. Envoyer webhook is called
-
----
-
-## Envoyer Setup
-
-### Step 1: Create Envoyer Project
-
-1. Go to [envoyer.io](https://envoyer.io)
-2. Create new project → "BrandCall"
-3. Connect to GitHub repository
-
-### Step 2: Configure Server
-
-Add the production server:
-- **Name:** brandcall-production
-- **IP:** 178.156.223.166
-- **User:** www-data (or deploy user)
-- **PHP Path:** /usr/bin/php8.3
-
-### Step 3: Configure Project Settings
-
-**Repository:**
-- Branch: `main`
-- Repository: `your-org/brandcall`
-
-**Project Path:**
-```
-/var/www/brandcall
-```
-
-**Releases to Retain:** 5
-
-### Step 4: Deployment Hooks
-
-Add these hooks in Envoyer:
-
-#### Before: Install Composer Dependencies
-```bash
-cd {{release}}
-composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
-```
-
-#### Before: Install NPM & Build Assets
-```bash
-cd {{release}}
-npm ci --no-audit
-npm run build
-```
-
-#### After: Clear Caches
-```bash
-cd {{release}}
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-```
-
-#### After: Cache Configuration
-```bash
-cd {{release}}
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache
-```
-
-#### After: Run Migrations
-```bash
-cd {{release}}
-php artisan migrate --force
-```
-
-#### After: Restart Queue Workers
-```bash
-cd {{release}}
-php artisan queue:restart
-```
-
-#### After: Restart Horizon (if installed)
-```bash
-cd {{release}}
-php artisan horizon:terminate || true
-```
-
-### Step 5: Shared Directories/Files
-
-Configure in Envoyer:
-
-**Shared Directories:**
-- `storage/app`
-- `storage/framework/cache`
-- `storage/framework/sessions`
-- `storage/framework/views`
-- `storage/logs`
-
-**Shared Files:**
-- `.env`
-
-### Step 6: Get Deploy Hook URL
-
-1. In Envoyer project settings → Deployment Hooks
-2. Copy the webhook URL
-3. Add to GitHub repository secrets as `ENVOYER_DEPLOY_HOOK`
-
-### Step 7: GitHub Secrets
-
-Add to GitHub → Settings → Secrets → Actions:
-
-| Secret | Value |
-|--------|-------|
-| `ENVOYER_DEPLOY_HOOK` | Your Envoyer webhook URL |
-
----
-
-## Server Directory Structure (After Envoyer)
+## Server Structure
 
 ```
 /var/www/brandcall/
-├── current -> releases/20260201143000    # Symlink to active release
+├── current -> releases/5      # Symlink to active release
 ├── releases/
-│   ├── 20260201143000/                   # Latest release
-│   ├── 20260201120000/                   # Previous release
-│   ├── 20260131180000/                   # Older release
-│   └── ...
-├── shared/
-│   ├── .env                              # Shared environment file
-│   └── storage/                          # Shared storage directory
-│       ├── app/
-│       ├── framework/
-│       └── logs/
-└── .envoyer/                             # Envoyer metadata
+│   ├── 1/                     # First release
+│   ├── 2/                     # Second release
+│   ├── 3/                     # Third release
+│   ├── 4/                     # Fourth release
+│   └── 5/                     # Latest release (active)
+└── shared/
+    ├── .env                   # Shared environment file
+    └── storage/               # Shared storage directory
+        ├── app/
+        ├── framework/
+        │   ├── cache/
+        │   ├── sessions/
+        │   └── views/
+        └── logs/
 ```
 
 ---
 
-## Manual Operations
+## Deployment Flow
 
-### Rollback
+1. **Prepare** — Create new release directory
+2. **Clone/Upload** — Get code into release
+3. **Composer Install** — Install PHP dependencies (no dev)
+4. **Symlink Shared** — Link .env and storage
+5. **Build Assets** — Upload pre-built frontend assets
+6. **Migrate** — Run database migrations
+7. **Optimize** — Cache config, routes, views
+8. **Permissions** — Fix storage permissions
+9. **Activate** — Atomic symlink switch (zero downtime)
+10. **Cleanup** — Restart queues, cleanup old releases
 
-In Envoyer dashboard:
-1. Go to Deployments
-2. Click "Rollback" on any previous deployment
+---
 
-Or via command line on server:
+## CI/CD with GitHub Actions
+
+### Automatic Deploys
+
+Pushing to `main` triggers automatic deployment:
+
+```
+Push to main → CI Tests → Build Assets → Deploy
+```
+
+### Required Secrets
+
+Add these to GitHub repository Settings → Secrets:
+
+| Secret | Description |
+|--------|-------------|
+| `SSH_PRIVATE_KEY` | Private SSH key for server access |
+| `DOT_ENV` | Production .env contents (optional) |
+
+### Manual Deploy
+
 ```bash
+# From local machine
+npm run build
+composer deploy
+```
+
+---
+
+## Rollback
+
+### Automatic Rollback
+
+If deployment fails, Deployer automatically rolls back to the previous release.
+
+### Manual Rollback
+
+```bash
+# Rollback to previous release
+composer rollback
+
+# Or via Deployer directly
+vendor/bin/dep rollback production
+```
+
+### Rollback to Specific Release
+
+```bash
+# List releases first
+composer releases
+
+# SSH and manually switch
+ssh root@178.156.223.166
 cd /var/www/brandcall
-ln -sfn releases/PREVIOUS_RELEASE current
-sudo systemctl reload php8.3-fpm
-```
-
-### Force Deploy
-
-Trigger deployment without code changes:
-1. GitHub → Actions → Deploy → Run workflow
-2. Or push an empty commit: `git commit --allow-empty -m "deploy"`
-
-### Health Check
-
-```bash
-# On server
-cd /var/www/brandcall/current
-php artisan about
-php artisan route:list --compact
-php artisan config:show app.env
-```
-
----
-
-## Nginx Configuration Update
-
-Update Nginx to use the `current` symlink:
-
-```nginx
-server {
-    server_name brandcall.io www.brandcall.io;
-    
-    # Point to current release
-    root /var/www/brandcall/current/public;
-    
-    # ... rest of config
-}
-```
-
-After updating:
-```bash
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
----
-
-## Local Development Commands
-
-```bash
-# Run tests
-composer test
-
-# Check code style
-composer lint        # Auto-fix
-composer lint:check  # Check only
-
-# Static analysis
-composer analyse
-
-# All quality checks (lint + analyse)
-composer quality
-
-# Smoke test
-composer smoke
+ln -sfn /var/www/brandcall/releases/3 /var/www/brandcall/current
 ```
 
 ---
 
 ## Troubleshooting
 
-### Deployment Failed
+### Deploy Locked
 
-1. Check Envoyer deployment log
-2. SSH to server and check:
-   ```bash
-   tail -f /var/www/brandcall/current/storage/logs/laravel.log
-   ```
+If a deploy fails and leaves a lock:
 
-### CI Failed
-
-1. Check GitHub Actions logs
-2. Run locally:
-   ```bash
-   composer quality
-   composer test
-   ```
-
-### Rollback Needed
-
-1. Use Envoyer dashboard "Rollback"
-2. Or SSH and manually symlink previous release
-
----
-
-## Environment Variables
-
-### Required for Production
-
-```env
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://brandcall.io
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_DATABASE=brandcall
-DB_USERNAME=brandcall
-DB_PASSWORD=xxx
-
-CACHE_DRIVER=redis
-QUEUE_CONNECTION=redis
-SESSION_DRIVER=redis
-
-REDIS_HOST=127.0.0.1
+```bash
+composer deploy:unlock
 ```
 
-### Envoyer-Managed
+### Permission Errors
 
-The `.env` file is in `/var/www/brandcall/shared/.env` and symlinked to each release.
-
-Edit via:
-1. Envoyer dashboard → Environment
-2. Or SSH: `nano /var/www/brandcall/shared/.env`
-
----
-
-## Security Notes
-
-- Deploy key is read-only (GitHub → Envoyer)
-- Server SSH uses key-based auth only
-- `.env` file is not in Git
-- Secrets stored in GitHub Secrets + Envoyer Environment
-
----
-
-## Server Information
-
-| Property | Value |
-|----------|-------|
-| **IP** | 178.156.223.166 |
-| **Hostname** | brandcall-web |
-| **Provider** | Hetzner Cloud (CPX21) |
-| **Location** | Ashburn, VA (us-east) |
-| **OS** | Ubuntu 24.04 LTS |
-| **PHP** | 8.4 |
-| **Database** | MariaDB 10.11 |
-| **Web Server** | Nginx 1.24 |
-| **Node.js** | 22 |
-| **Web Root** | `/var/www/brandcall/public` |
-| **SSH** | `ssh -i ~/.ssh/id_rsa root@178.156.223.166` |
-
-### Database Credentials
-
+```bash
+ssh root@178.156.223.166
+chown -R www-data:www-data /var/www/brandcall
+chmod -R 775 /var/www/brandcall/shared/storage
 ```
-DB_DATABASE=brandcall
-DB_USERNAME=brandcall
-DB_PASSWORD=BrandCall2026Secure!
+
+### Clear All Caches
+
+```bash
+ssh root@178.156.223.166
+cd /var/www/brandcall/current
+php artisan optimize:clear
+php artisan optimize
+```
+
+### View Logs
+
+```bash
+ssh root@178.156.223.166
+tail -f /var/www/brandcall/shared/storage/logs/laravel.log
 ```
 
 ---
 
-*Last updated: February 2026*
+## Configuration
+
+### deploy.php
+
+Main Deployer configuration. Key settings:
+
+```php
+// Number of releases to keep
+set('keep_releases', 5);
+
+// SSH user
+->set('remote_user', 'root')
+
+// Deploy path
+->set('deploy_path', '/var/www/brandcall')
+```
+
+### Nginx
+
+Points to `/var/www/brandcall/current/public`:
+
+```nginx
+root /var/www/brandcall/current/public;
+```
+
+---
+
+## Server Requirements
+
+- PHP 8.3+
+- Composer 2.x
+- Node.js 22+ (for local builds)
+- Nginx
+- MariaDB 10.11+
+- Redis (for queues/cache)
+
+---
+
+## Health Checks
+
+After deployment, verify:
+
+1. **Homepage** — https://brandcall.io
+2. **Admin** — https://brandcall.io/admin
+3. **Health** — https://brandcall.io/health (if configured)
+
+---
+
+## Hotfixes
+
+For urgent fixes that can't wait for full deploy:
+
+```bash
+# SSH to server
+ssh root@178.156.223.166
+
+# Edit file directly (not recommended)
+cd /var/www/brandcall/current
+nano app/SomeFile.php
+
+# Clear caches
+php artisan optimize:clear
+php artisan optimize
+```
+
+**Note:** Direct edits will be lost on next deploy. Always commit changes to git.
