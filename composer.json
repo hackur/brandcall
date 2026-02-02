@@ -82,6 +82,8 @@
         "rollback": "./vendor/bin/dep rollback production",
         "releases": "./vendor/bin/dep releases production",
         "ssh": "./vendor/bin/dep ssh production",
+        "backup": "./vendor/bin/dep backup:database production",
+        "backup:local": "bash scripts/backup-database.sh",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
