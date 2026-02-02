@@ -1,5 +1,6 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import OnboardingLayout from '@/Layouts/OnboardingLayout';
+import { useEffect, useState } from 'react';
 
 interface User {
     name: string;
@@ -34,6 +35,20 @@ interface Props {
 }
 
 export default function Dashboard({ user, documents, tickets }: Props) {
+    const [showVerifiedBanner, setShowVerifiedBanner] = useState(false);
+
+    useEffect(() => {
+        // Check for ?verified=1 query param
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verified') === '1') {
+            setShowVerifiedBanner(true);
+            // Remove the query param from URL
+            window.history.replaceState({}, '', window.location.pathname);
+            // Auto-hide after 5 seconds
+            setTimeout(() => setShowVerifiedBanner(false), 5000);
+        }
+    }, []);
+
     const steps = [
         {
             title: 'Verify Email',
@@ -80,6 +95,29 @@ export default function Dashboard({ user, documents, tickets }: Props) {
             <Head title="Onboarding" />
 
             <div className="max-w-4xl mx-auto">
+                {/* Email Verified Success Banner */}
+                {showVerifiedBanner && (
+                    <div className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-medium text-green-400">Email Verified!</p>
+                            <p className="text-sm text-green-400/70">Your email address has been successfully verified.</p>
+                        </div>
+                        <button 
+                            onClick={() => setShowVerifiedBanner(false)}
+                            className="text-green-400 hover:text-green-300"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                )}
+
                 {/* Welcome Header */}
                 <div className="text-center mb-10">
                     <h1 className="text-3xl font-bold text-white mb-2">

@@ -51,6 +51,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Go directly to onboarding (doesn't require verified email)
+        return redirect(route('onboarding.index', absolute: false));
     }
 }
