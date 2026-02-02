@@ -12,7 +12,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class DocumentResource extends Resource
 {
@@ -40,7 +40,7 @@ class DocumentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Document Information')
+                Forms\Components\Section::make('Document Review')
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->options([
@@ -64,15 +64,21 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('thumbnail')
+                    ->label('')
+                    ->width(60)
+                    ->height(60)
+                    ->defaultImageUrl(fn (Document $record) => $record->getMetadata()['is_pdf'] 
+                        ? 'https://cdn-icons-png.flaticon.com/512/337/337946.png' 
+                        : null)
+                    ->getStateUsing(fn (Document $record) => $record->getThumbnailUrl())
+                    ->circular(false),
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('User')
+                    ->description(fn (Document $record) => $record->user?->email)
                     ->searchable()
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('user.email')
-                    ->label('Email')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
@@ -86,12 +92,18 @@ class DocumentResource extends Resource
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
-                    ->limit(30),
-
-                Tables\Columns\TextColumn::make('original_filename')
-                    ->label('File')
                     ->limit(25)
-                    ->toggleable(),
+                    ->tooltip(fn (Document $record) => $record->original_filename),
+
+                Tables\Columns\TextColumn::make('size_formatted')
+                    ->label('Size')
+                    ->getStateUsing(fn (Document $record) => $record->getMetadata()['size_formatted']),
+
+                Tables\Columns\TextColumn::make('mime_type')
+                    ->label('Type')
+                    ->getStateUsing(fn (Document $record) => strtoupper($record->getMetadata()['extension']))
+                    ->badge()
+                    ->color('gray'),
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -106,6 +118,12 @@ class DocumentResource extends Resource
                     ->label('Uploaded')
                     ->dateTime('M j, Y g:i A')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('last_viewed_at')
+                    ->label('Last Viewed')
+                    ->dateTime('M j, Y g:i A')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('reviewed_at')
                     ->label('Reviewed')
@@ -129,10 +147,23 @@ class DocumentResource extends Resource
                     ),
             ])
             ->actions([
+                Tables\Actions\Action::make('preview')
+                    ->icon('heroicon-o-eye')
+                    ->color('gray')
+                    ->modalHeading(fn (Document $record) => $record->name)
+                    ->modalContent(fn (Document $record) => new HtmlString(
+                        $record->getMetadata()['is_pdf']
+                            ? '<iframe src="' . $record->getPreviewUrl() . '" class="w-full h-[70vh]"></iframe>'
+                            : '<img src="' . ($record->getPreviewUrl() ?? $record->getDownloadUrl()) . '" class="max-w-full max-h-[70vh] mx-auto" />'
+                    ))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->action(fn (Document $record) => $record->markAsViewed()),
+
                 Tables\Actions\Action::make('download')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('gray')
-                    ->url(fn (Document $record) => route('filament.admin.documents.download', $record))
+                    ->url(fn (Document $record) => $record->getDownloadUrl())
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('approve')
@@ -210,6 +241,21 @@ class DocumentResource extends Resource
     {
         return $infolist
             ->schema([
+                Infolists\Components\Section::make('Preview')
+                    ->schema([
+                        Infolists\Components\ImageEntry::make('preview')
+                            ->label('')
+                            ->getStateUsing(fn (Document $record) => $record->getThumbnailUrl() ?? $record->getPreviewUrl())
+                            ->height(200)
+                            ->visible(fn (Document $record) => $record->getMetadata()['is_image']),
+
+                        Infolists\Components\ViewEntry::make('pdf_preview')
+                            ->label('')
+                            ->view('filament.infolists.entries.pdf-preview')
+                            ->visible(fn (Document $record) => $record->getMetadata()['is_pdf']),
+                    ])
+                    ->collapsible(),
+
                 Infolists\Components\Section::make('Document Details')
                     ->schema([
                         Infolists\Components\TextEntry::make('name'),
@@ -218,9 +264,14 @@ class DocumentResource extends Resource
                         Infolists\Components\TextEntry::make('original_filename')
                             ->label('Original Filename'),
                         Infolists\Components\TextEntry::make('mime_type')
-                            ->label('File Type'),
+                            ->label('MIME Type')
+                            ->getStateUsing(fn (Document $record) => $record->getMetadata()['mime_type']),
                         Infolists\Components\TextEntry::make('size')
-                            ->formatStateUsing(fn (int $state): string => number_format($state / 1024, 1) . ' KB'),
+                            ->label('File Size')
+                            ->getStateUsing(fn (Document $record) => $record->getMetadata()['size_formatted']),
+                        Infolists\Components\TextEntry::make('extension')
+                            ->label('Extension')
+                            ->getStateUsing(fn (Document $record) => strtoupper($record->getMetadata()['extension'])),
                         Infolists\Components\TextEntry::make('status')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
@@ -243,18 +294,34 @@ class DocumentResource extends Resource
                     ])
                     ->columns(3),
 
+                Infolists\Components\Section::make('Timestamps')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Uploaded')
+                            ->dateTime('M j, Y g:i A'),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Last Modified')
+                            ->dateTime('M j, Y g:i A'),
+                        Infolists\Components\TextEntry::make('last_viewed_at')
+                            ->label('Last Viewed')
+                            ->dateTime('M j, Y g:i A')
+                            ->placeholder('Never'),
+                        Infolists\Components\TextEntry::make('reviewed_at')
+                            ->label('Reviewed')
+                            ->dateTime('M j, Y g:i A')
+                            ->placeholder('Not yet reviewed'),
+                    ])
+                    ->columns(4),
+
                 Infolists\Components\Section::make('Review')
                     ->schema([
                         Infolists\Components\TextEntry::make('notes')
                             ->label('Review Notes')
                             ->placeholder('No notes'),
-                        Infolists\Components\TextEntry::make('reviewed_at')
-                            ->label('Reviewed At')
-                            ->dateTime(),
                         Infolists\Components\TextEntry::make('reviewer.name')
                             ->label('Reviewed By'),
                     ])
-                    ->columns(3)
+                    ->columns(2)
                     ->visible(fn (Document $record) => $record->reviewed_at !== null),
             ]);
     }
