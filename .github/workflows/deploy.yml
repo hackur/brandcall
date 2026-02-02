@@ -1,29 +1,31 @@
 name: Deploy
 
+# Manual deployment only - we use Deployer locally for zero-downtime deploys
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-
-concurrency:
-  group: deploy-production
-  cancel-in-progress: false
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 jobs:
   deploy:
-    name: Deploy to Production
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    
+    environment: ${{ inputs.environment }}
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
-          coverage: none
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,11 +33,10 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
-
-      - name: Install NPM dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          npm ci
 
       - name: Build assets
         run: npm run build
@@ -49,14 +50,4 @@ jobs:
         run: ssh-keyscan -H 178.156.223.166 >> ~/.ssh/known_hosts
 
       - name: Deploy with Deployer
-        run: vendor/bin/dep deploy production -vvv
-        env:
-          DOT_ENV: ${{ secrets.DOT_ENV }}
-
-      - name: Notify on success
-        if: success()
-        run: echo "✅ Deployment successful!"
-
-      - name: Notify on failure
-        if: failure()
-        run: echo "❌ Deployment failed!"
+        run: vendor/bin/dep deploy ${{ inputs.environment }} -vvv
