@@ -3,13 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -17,50 +19,92 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Platform';
+    protected static ?string $navigationGroup = 'KYC & Compliance';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) User::where('status', 'pending')->count() ?: null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return User::where('status', 'pending')->count() > 0 ? 'warning' : 'success';
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('User Details')
+                Forms\Components\Section::make('User Information')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
+
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required()
-                            ->unique(ignoreRecord: true),
-                        Forms\Components\Select::make('tenant_id')
-                            ->label('Tenant')
-                            ->relationship('tenant', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->nullable()
-                            ->helperText('Leave empty for platform admins'),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Password')
-                    ->schema([
-                        Forms\Components\TextInput::make('password')
-                            ->password()
-                            ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255),
-                    ]),
 
-                Forms\Components\Section::make('Roles')
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'pending' => 'Pending',
+                                'verified' => 'Verified (KYC Submitted)',
+                                'approved' => 'Approved',
+                                'suspended' => 'Suspended',
+                            ])
+                            ->required()
+                            ->native(false),
+
+                        Forms\Components\Toggle::make('is_admin')
+                            ->label('Admin Access')
+                            ->helperText('Allow access to admin panel'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Company Information')
                     ->schema([
-                        Forms\Components\Select::make('roles')
-                            ->relationship('roles', 'name')
-                            ->multiple()
-                            ->preload()
-                            ->searchable(),
-                    ]),
+                        Forms\Components\TextInput::make('company_name')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('company_website')
+                            ->url()
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('company_phone')
+                            ->tel()
+                            ->maxLength(20),
+
+                        Forms\Components\TextInput::make('industry')
+                            ->maxLength(100),
+
+                        Forms\Components\Select::make('monthly_call_volume')
+                            ->options([
+                                'under_1k' => 'Under 1,000',
+                                '1k_10k' => '1,000 - 10,000',
+                                '10k_100k' => '10,000 - 100,000',
+                                '100k_1m' => '100,000 - 1M',
+                                'over_1m' => 'Over 1M',
+                            ])
+                            ->native(false),
+
+                        Forms\Components\Select::make('use_case')
+                            ->options([
+                                'sales' => 'Sales & Marketing',
+                                'support' => 'Customer Support',
+                                'notifications' => 'Notifications & Alerts',
+                                'collections' => 'Collections',
+                                'appointments' => 'Appointment Reminders',
+                                'surveys' => 'Surveys & Research',
+                                'other' => 'Other',
+                            ])
+                            ->native(false),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -71,51 +115,128 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
-                    ->copyable(),
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('Tenant')
-                    ->badge()
-                    ->color('gray')
-                    ->placeholder('Platform Admin'),
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('company_name')
+                    ->label('Company')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'super-admin' => 'danger',
-                        'owner' => 'success',
-                        'admin' => 'warning',
-                        'member' => 'gray',
+                        'pending' => 'warning',
+                        'verified' => 'info',
+                        'approved' => 'success',
+                        'suspended' => 'danger',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->label('Verified')
-                    ->dateTime()
-                    ->sortable()
+
+                Tables\Columns\IconColumn::make('email_verified_at')
+                    ->label('Email Verified')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-x-circle'),
+
+                Tables\Columns\TextColumn::make('documents_count')
+                    ->label('Docs')
+                    ->counts('documents')
+                    ->sortable(),
+
+                Tables\Columns\IconColumn::make('is_admin')
+                    ->label('Admin')
+                    ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Registered')
+                    ->dateTime('M j, Y')
+                    ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant')
-                    ->relationship('tenant', 'name')
-                    ->searchable()
-                    ->preload(),
-                Tables\Filters\SelectFilter::make('roles')
-                    ->relationship('roles', 'name')
-                    ->multiple()
-                    ->preload(),
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'verified' => 'Verified',
+                        'approved' => 'Approved',
+                        'suspended' => 'Suspended',
+                    ]),
+
+                Tables\Filters\TernaryFilter::make('email_verified_at')
+                    ->label('Email Verified')
+                    ->nullable(),
+
+                Tables\Filters\TernaryFilter::make('is_admin')
+                    ->label('Admin Users'),
             ])
             ->actions([
+                Tables\Actions\Action::make('approve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Approve User')
+                    ->modalDescription('This will grant the user full access to the platform.')
+                    ->visible(fn (User $record) => in_array($record->status, ['pending', 'verified']))
+                    ->action(function (User $record) {
+                        $record->update(['status' => 'approved']);
+
+                        Notification::make()
+                            ->title('User approved')
+                            ->success()
+                            ->send();
+                    }),
+
+                Tables\Actions\Action::make('suspend')
+                    ->icon('heroicon-o-no-symbol')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Suspend User')
+                    ->modalDescription('This will revoke the user\'s access to the platform.')
+                    ->visible(fn (User $record) => $record->status !== 'suspended')
+                    ->action(function (User $record) {
+                        $record->update(['status' => 'suspended']);
+
+                        Notification::make()
+                            ->title('User suspended')
+                            ->warning()
+                            ->send();
+                    }),
+
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('approve')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each(fn ($record) => $record->update(['status' => 'approved']));
+
+                            Notification::make()
+                                ->title('Users approved')
+                                ->success()
+                                ->send();
+                        }),
+
+                    Tables\Actions\BulkAction::make('suspend')
+                        ->icon('heroicon-o-no-symbol')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each(fn ($record) => $record->update(['status' => 'suspended']));
+
+                            Notification::make()
+                                ->title('Users suspended')
+                                ->warning()
+                                ->send();
+                        }),
                 ]),
             ]);
     }
@@ -123,7 +244,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\DocumentsRelationManager::class,
+            RelationManagers\SupportTicketsRelationManager::class,
         ];
     }
 
@@ -132,6 +254,7 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
+            'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }

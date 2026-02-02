@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DocumentDownloadController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
@@ -104,6 +105,16 @@ Route::middleware(['auth', 'can:viewPulse'])->prefix('pulse')->group(function ()
         return view('vendor.pulse.dashboard');
     })->name('pulse');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Admin Document Download
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'can:viewAny,App\Models\Document'])
+    ->get('/admin/documents/{document}/download', DocumentDownloadController::class)
+    ->name('filament.admin.documents.download');
 
 /*
 |--------------------------------------------------------------------------
