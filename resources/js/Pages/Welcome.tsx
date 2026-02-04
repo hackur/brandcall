@@ -178,6 +178,7 @@ const complianceBadges = [
 ];
 
 export default function Welcome({ auth }: PageProps) {
+    const swiperRef = useRef<SwiperType | null>(null);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [isDark, setIsDark] = useState(true);
@@ -300,24 +301,73 @@ export default function Welcome({ auth }: PageProps) {
                     {/* Hero Section */}
                     <section className="py-16 sm:py-20 lg:py-28">
                         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-                            <div className="max-w-4xl">
-                                <div className="flex items-center gap-3 mb-6">
+                            <div className="max-w-4xl mx-auto text-center">
+                                <div className="flex items-center justify-center gap-3 mb-6">
                                     <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-brand-600 dark:text-brand-400 bg-brand-600/10 rounded-full border border-brand-600/20">
                                         Enterprise Solution
                                     </span>
                                 </div>
 
-                                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tight text-theme-primary leading-[1.1] mb-6">
-                                    Branded Caller ID<br />
-                                    <span className="text-theme-tertiary">for the Enterprise</span>
-                                </h1>
+                                {/* Headlines Carousel with Swiper */}
+                                <div className="relative mb-6 sm:mb-8">
+                                    {/* Desktop Navigation Arrows */}
+                                    <button 
+                                        onClick={() => swiperRef.current?.slidePrev()}
+                                        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 lg:-translate-x-16 z-10 h-10 w-10 items-center justify-center rounded-full border border-theme-primary bg-theme-secondary/80 text-theme-tertiary hover:bg-theme-tertiary hover:text-theme-primary hover:border-theme-secondary transition-all"
+                                        aria-label="Previous headline"
+                                    >
+                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </button>
+                                    <button 
+                                        onClick={() => swiperRef.current?.slideNext()}
+                                        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 lg:translate-x-16 z-10 h-10 w-10 items-center justify-center rounded-full border border-theme-primary bg-theme-secondary/80 text-theme-tertiary hover:bg-theme-tertiary hover:text-theme-primary hover:border-theme-secondary transition-all"
+                                        aria-label="Next headline"
+                                    >
+                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
 
-                                <p className="text-base sm:text-lg lg:text-xl text-theme-secondary max-w-2xl mb-8 leading-relaxed">
+                                    <Swiper
+                                        modules={[Pagination, Autoplay, EffectFade]}
+                                        effect="fade"
+                                        fadeEffect={{ crossFade: true }}
+                                        autoplay={{
+                                            delay: 5000,
+                                            disableOnInteraction: false,
+                                        }}
+                                        pagination={{
+                                            clickable: true,
+                                            bulletClass: 'swiper-pagination-bullet !w-1.5 !h-1.5 !bg-theme-muted !opacity-100 !mx-1 transition-all duration-200',
+                                            bulletActiveClass: '!w-6 sm:!w-8 !bg-brand-500 !rounded-full',
+                                        }}
+                                        loop={true}
+                                        onSwiper={(swiper) => { swiperRef.current = swiper; }}
+                                        className="!pb-10"
+                                    >
+                                        {headlines.map((headline, index) => (
+                                            <SwiperSlide key={index}>
+                                                <h1 className="text-[clamp(1.5rem,5.5vw,3.75rem)] font-extrabold tracking-tight leading-[1.1] min-h-[100px] sm:min-h-[140px] flex flex-col items-center justify-center">
+                                                    <span className="bg-gradient-to-r from-brand-400 via-purple-400 to-brand-400 bg-clip-text text-transparent block">
+                                                        {headline.title}
+                                                    </span>
+                                                    <span className="text-theme-primary block">
+                                                        {headline.subtitle}
+                                                    </span>
+                                                </h1>
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                </div>
+
+                                <p className="text-base sm:text-lg lg:text-xl text-theme-secondary max-w-2xl mx-auto mb-8 leading-relaxed">
                                     Display your verified business identity on every outbound call. 
                                     Increase answer rates, maintain compliance, and protect your brand reputation.
                                 </p>
 
-                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-12">
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12">
                                     <Link 
                                         href={route('register')} 
                                         className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-brand-600 rounded-md hover:bg-brand-500 transition-colors"
