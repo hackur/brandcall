@@ -1,13 +1,18 @@
 # NumHub BrandControl API Integration Guide
 
-> **Last Updated:** 2026-01-31
-> **Status:** Research Complete - API Credentials Required for Full Documentation
+> **Last Updated:** 2026-02-04
+> **Status:** Research Complete - API Credentials Required for Full Implementation
+
+## Quick Links
+
+- **[NUMHUB.md](./NUMHUB.md)** - Comprehensive platform guide, FAQs, and business documentation
+- **This file** - Technical API integration patterns and implementation details
 
 ## Executive Summary
 
 NumHub provides the **BrandControl Platform**, a cloud-based SaaS solution for Branded Calling ID (BCID) enablement. Their platform streamlines all aspects of BCID adoption including registration, onboarding, vetting, signing, billing, and reporting.
 
-⚠️ **Important:** NumHub's API documentation is not publicly available. This guide documents what's known from marketing materials and industry standards. Full API documentation requires contacting NumHub sales.
+⚠️ **Important:** NumHub's API documentation is not publicly available. This guide documents expected API patterns based on industry standards. Full API documentation requires contacting NumHub sales (844-4-NUMHUB).
 
 ---
 

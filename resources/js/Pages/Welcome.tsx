@@ -1,13 +1,12 @@
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
+import { Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 
 // Swiper styles
 import 'swiper/css';
-import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 
@@ -18,74 +17,203 @@ const headlines = [
     { title: 'Your Brand, Your Identity', subtitle: 'On Every Outbound Call' },
 ];
 
+// Custom SVG Icons
+const Icons = {
+    phone: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    shield: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    brandIdentity: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5"/>
+            <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M7 21v-1a5 5 0 0110 0v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    analytics: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    lock: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="12" cy="16" r="1" fill="currentColor"/>
+        </svg>
+    ),
+    api: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M16 18l2-2-2-2M8 18l-2-2 2-2M14 4l-4 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    users: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <circle cx="9" cy="7" r="3" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="17" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M21 21v-1.5a3 3 0 00-3-3h-.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    building: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4M9 9h.01M15 9h.01M9 13h.01M15 13h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    heart: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    dollar: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M12 6v12M9 9.5a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5M12 17.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    shieldCheck: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
+    ),
+    sun: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    moon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    arrow: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    check: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+};
+
+const stats = [
+    { value: '99.9%', label: 'Uptime SLA' },
+    { value: '500+', label: 'Enterprise Clients' },
+    { value: '50M+', label: 'Calls Branded Monthly' },
+    { value: '30%', label: 'Higher Answer Rates' },
+];
+
 const features = [
     {
-        icon: (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-        ),
-        title: 'STIR/SHAKEN Compliant',
-        description: 'Full attestation for legitimate business calls. Meet FCC requirements automatically.',
+        icon: Icons.shield,
+        title: 'STIR/SHAKEN Attestation',
+        description: 'Full A-level attestation for legitimate business calls. Automatic FCC compliance for all outbound calls.',
     },
     {
-        icon: (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-            </svg>
-        ),
-        title: 'Rich Call Display',
-        description: 'Show your logo, business name, and call reason. Stand out on every device.',
+        icon: Icons.brandIdentity,
+        title: 'Rich Call Data (RCD)',
+        description: 'Display your company logo, verified business name, and call purpose on supported devices.',
     },
     {
-        icon: (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-        ),
-        title: 'Higher Answer Rates',
-        description: 'Branded calls see up to 30% higher answer rates compared to unknown numbers.',
+        icon: Icons.analytics,
+        title: 'Number Reputation Management',
+        description: 'Real-time monitoring across carrier databases. Automated remediation for flagged numbers.',
     },
     {
-        icon: (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-        ),
-        title: 'Number Reputation',
-        description: 'Monitor and protect your calling numbers from spam flags and blocking.',
+        icon: Icons.lock,
+        title: 'Enterprise Security',
+        description: 'SOC 2 Type II certified. End-to-end encryption. Role-based access control and audit logging.',
+    },
+    {
+        icon: Icons.api,
+        title: 'API-First Platform',
+        description: 'RESTful APIs with comprehensive documentation. Webhooks for real-time call status updates.',
+    },
+    {
+        icon: Icons.users,
+        title: 'Multi-Tenant Support',
+        description: 'Manage multiple brands and campaigns. Hierarchical organization with delegated administration.',
     },
 ];
 
-const steps = [
-    { number: '01', title: 'Create Account', description: 'Sign up and verify your business in minutes.' },
-    { number: '02', title: 'Register Numbers', description: 'Add your outbound calling numbers to the platform.' },
-    { number: '03', title: 'Brand Your Calls', description: 'Upload logo, set business name and call categories.' },
-    { number: '04', title: 'Start Calling', description: 'Your branded identity displays on every outbound call.' },
+const useCases = [
+    {
+        title: 'Contact Centers',
+        description: 'Increase connection rates and reduce call abandonment with verified caller identity.',
+        icon: Icons.building,
+    },
+    {
+        title: 'Healthcare',
+        description: 'HIPAA-compliant calling with verified provider identification for patient outreach.',
+        icon: Icons.heart,
+    },
+    {
+        title: 'Financial Services',
+        description: 'Build trust with verified calls for collections, fraud alerts, and account notifications.',
+        icon: Icons.dollar,
+    },
+    {
+        title: 'Insurance',
+        description: 'Improve policyholder engagement with branded calls for claims and policy updates.',
+        icon: Icons.shieldCheck,
+    },
+];
+
+const complianceBadges = [
+    { name: 'SOC 2', description: 'Type II Certified' },
+    { name: 'STIR/SHAKEN', description: 'Full Compliance' },
+    { name: 'HIPAA', description: 'Compliant' },
+    { name: 'TCPA', description: 'Compliant' },
 ];
 
 export default function Welcome({ auth }: PageProps) {
-    const swiperRef = useRef<SwiperType | null>(null);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [isDark, setIsDark] = useState(true);
+
+    // Initialize theme from localStorage or system preference
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('brandcall-theme');
+        if (savedTheme) {
+            setIsDark(savedTheme === 'dark');
+        } else {
+            setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+    }, []);
+
+    // Apply theme class to document
+    useEffect(() => {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        localStorage.setItem('brandcall-theme', isDark ? 'dark' : 'light');
+    }, [isDark]);
 
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-            const scrollThreshold = 10; // Minimum scroll before triggering
+            const scrollThreshold = 10;
             
-            if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) {
-                return;
-            }
+            if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) return;
             
-            // Always show header at top of page
             if (currentScrollY < 50) {
                 setIsHeaderVisible(true);
             } else if (currentScrollY > lastScrollY) {
-                // Scrolling down - hide header
                 setIsHeaderVisible(false);
             } else {
-                // Scrolling up - show header
                 setIsHeaderVisible(true);
             }
             
@@ -96,44 +224,54 @@ export default function Welcome({ auth }: PageProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
 
+    const toggleTheme = () => setIsDark(!isDark);
+
     return (
         <div>
-            <Head title="BrandCall - Branded Caller ID Platform" />
+            <Head title="BrandCall - Enterprise Branded Caller ID Platform" />
             
-            <div className="relative min-h-screen bg-slate-950">
-                {/* Subtle gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950" />
-                
-                {/* Single subtle accent glow - contained to prevent horizontal scroll */}
-                <div className="absolute inset-x-0 top-0 h-[600px] flex justify-center overflow-hidden pointer-events-none">
-                    <div className="w-[800px] h-[600px] bg-brand-600/10 rounded-full blur-[120px] flex-shrink-0" />
-                </div>
-
+            <div className="relative min-h-screen bg-theme-primary transition-colors duration-300">
                 {/* Content */}
                 <div className="relative z-10">
-                    {/* Navigation - Fixed header with hide/show on scroll */}
+                    {/* Navigation */}
                     <nav 
-                        className={`fixed top-0 left-0 right-0 z-50 px-5 sm:px-6 py-3 sm:py-4 bg-slate-950/95 backdrop-blur-lg border-b border-slate-800/50 transition-transform duration-300 ${
+                        className={`fixed top-0 left-0 right-0 z-50 px-5 sm:px-6 py-3 sm:py-4 bg-theme-primary/95 backdrop-blur-lg border-b border-theme-primary transition-all duration-300 ${
                             isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
                         }`}
                     >
                         <div className="max-w-7xl mx-auto flex items-center justify-between">
-                            {/* Logo */}
                             <Link href="/" className="flex items-center gap-2 sm:gap-3">
-                                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-600/25">
-                                    <svg className="h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
+                                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-brand-600">
+                                    <div className="h-4 w-4 sm:h-5 sm:w-5 text-white">
+                                        {Icons.phone}
+                                    </div>
                                 </div>
-                                <span className="text-lg sm:text-xl font-bold text-white">BrandCall</span>
+                                <span className="text-lg sm:text-xl font-semibold text-theme-primary">BrandCall</span>
                             </Link>
 
-                            {/* Nav Links */}
+                            <div className="hidden md:flex items-center gap-8">
+                                <a href="#features" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Features</a>
+                                <a href="#solutions" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Solutions</a>
+                                <a href="#compliance" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Compliance</a>
+                                <a href="#" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Pricing</a>
+                            </div>
+
                             <div className="flex items-center gap-2 sm:gap-4">
+                                {/* Theme Toggle */}
+                                <button
+                                    onClick={toggleTheme}
+                                    className="p-2 rounded-md text-theme-tertiary hover:text-theme-primary hover:bg-theme-tertiary/50 transition-colors"
+                                    aria-label="Toggle theme"
+                                >
+                                    <div className="h-5 w-5">
+                                        {isDark ? Icons.sun : Icons.moon}
+                                    </div>
+                                </button>
+
                                 {auth.user ? (
                                     <Link 
                                         href={route('dashboard')} 
-                                        className="inline-flex items-center px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-brand-600 rounded-lg hover:bg-brand-500 transition-colors"
+                                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-md hover:bg-brand-500 transition-colors"
                                     >
                                         Dashboard
                                     </Link>
@@ -141,15 +279,15 @@ export default function Welcome({ auth }: PageProps) {
                                     <>
                                         <Link
                                             href={route('login')}
-                                            className="hidden sm:block px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                                            className="hidden sm:block px-4 py-2 text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors"
                                         >
-                                            Log in
+                                            Sign In
                                         </Link>
                                         <Link 
                                             href={route('register')} 
-                                            className="inline-flex items-center px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-brand-600 rounded-lg hover:bg-brand-500 transition-colors"
+                                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-md hover:bg-brand-500 transition-colors"
                                         >
-                                            Get Started
+                                            Request Demo
                                         </Link>
                                     </>
                                 )}
@@ -157,129 +295,110 @@ export default function Welcome({ auth }: PageProps) {
                         </div>
                     </nav>
                     
-                    {/* Spacer for fixed header */}
                     <div className="h-14 sm:h-16" />
 
                     {/* Hero Section */}
-                    <section className="py-12 sm:py-16 lg:py-32">
+                    <section className="py-16 sm:py-20 lg:py-28">
                         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-                            <div className="max-w-4xl mx-auto text-center">
-                                {/* Eyebrow */}
-                                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-brand-400 mb-3 sm:mb-6">
-                                    Trusted by 500+ Businesses
-                                </p>
-
-                                {/* Headlines Carousel with Swiper */}
-                                <div className="relative mb-4 sm:mb-8">
-                                    {/* Desktop Navigation Arrows */}
-                                    <button 
-                                        onClick={() => swiperRef.current?.slidePrev()}
-                                        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 lg:-translate-x-16 z-10 h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-800/80 text-slate-400 hover:bg-slate-700 hover:text-white hover:border-slate-600 transition-all"
-                                        aria-label="Previous headline"
-                                    >
-                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-                                    <button 
-                                        onClick={() => swiperRef.current?.slideNext()}
-                                        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 lg:translate-x-16 z-10 h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-800/80 text-slate-400 hover:bg-slate-700 hover:text-white hover:border-slate-600 transition-all"
-                                        aria-label="Next headline"
-                                    >
-                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </button>
-
-                                    <Swiper
-                                        modules={[Pagination, Autoplay, EffectFade]}
-                                        effect="fade"
-                                        fadeEffect={{ crossFade: true }}
-                                        autoplay={{
-                                            delay: 5000,
-                                            disableOnInteraction: false,
-                                        }}
-                                        pagination={{
-                                            clickable: true,
-                                            bulletClass: 'swiper-pagination-bullet !w-1.5 !h-1.5 !bg-slate-700 !opacity-100 !mx-1 transition-all duration-200',
-                                            bulletActiveClass: '!w-6 sm:!w-8 !bg-brand-500 !rounded-full',
-                                        }}
-                                        loop={true}
-                                        onSwiper={(swiper) => { swiperRef.current = swiper; }}
-                                        className="!pb-10"
-                                    >
-                                        {headlines.map((headline, index) => (
-                                            <SwiperSlide key={index}>
-                                                <h1 className="text-[clamp(1.5rem,5.5vw,3.75rem)] font-extrabold tracking-tight leading-[1.1] min-h-[100px] sm:min-h-[140px] flex flex-col items-center justify-center">
-                                                    <span className="bg-gradient-to-r from-brand-400 via-purple-400 to-brand-400 bg-clip-text text-transparent block">
-                                                        {headline.title}
-                                                    </span>
-                                                    <span className="text-white block">
-                                                        {headline.subtitle}
-                                                    </span>
-                                                </h1>
-                                            </SwiperSlide>
-                                        ))}
-                                    </Swiper>
+                            <div className="max-w-4xl">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-brand-600 dark:text-brand-400 bg-brand-600/10 rounded-full border border-brand-600/20">
+                                        Enterprise Solution
+                                    </span>
                                 </div>
 
-                                {/* Subheadline */}
-                                <p className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-xs sm:max-w-xl lg:max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed">
-                                    Display your business name, logo, and call reason on every outbound call. 
-                                    Build trust before they even answer.
+                                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tight text-theme-primary leading-[1.1] mb-6">
+                                    Branded Caller ID<br />
+                                    <span className="text-theme-tertiary">for the Enterprise</span>
+                                </h1>
+
+                                <p className="text-base sm:text-lg lg:text-xl text-theme-secondary max-w-2xl mb-8 leading-relaxed">
+                                    Display your verified business identity on every outbound call. 
+                                    Increase answer rates, maintain compliance, and protect your brand reputation.
                                 </p>
 
-                                {/* CTAs */}
-                                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-12">
                                     <Link 
                                         href={route('register')} 
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg shadow-lg shadow-brand-600/25 hover:shadow-xl hover:shadow-brand-600/30 hover:-translate-y-0.5 transition-all duration-200"
+                                        className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-brand-600 rounded-md hover:bg-brand-500 transition-colors"
                                     >
-                                        Start Free Trial
-                                        <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                        </svg>
+                                        Request a Demo
+                                        <div className="h-4 w-4">{Icons.arrow}</div>
                                     </Link>
-                                    <button className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold text-slate-300 border border-slate-700 rounded-lg hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-colors">
-                                        Watch Demo
-                                        <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </button>
+                                    <Link 
+                                        href="#features"
+                                        className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-theme-secondary border border-theme-primary rounded-md hover:bg-theme-tertiary transition-colors"
+                                    >
+                                        View Documentation
+                                    </Link>
+                                </div>
+
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 pt-8 border-t border-theme-primary">
+                                    {stats.map((stat, index) => (
+                                        <div key={index}>
+                                            <div className="text-2xl sm:text-3xl font-semibold text-theme-primary mb-1">
+                                                {stat.value}
+                                            </div>
+                                            <div className="text-sm text-theme-muted">
+                                                {stat.label}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Compliance Badges */}
+                    <section id="compliance" className="py-12 border-t border-theme-primary">
+                        <div className="max-w-7xl mx-auto px-6 sm:px-8">
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                                <p className="text-sm text-theme-muted font-medium">
+                                    Compliance & Certifications
+                                </p>
+                                <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+                                    {complianceBadges.map((badge, index) => (
+                                        <div key={index} className="flex items-center gap-2">
+                                            <div className="h-5 w-5 text-green-500">
+                                                {Icons.check}
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-theme-primary">{badge.name}</span>
+                                                <span className="text-theme-muted text-sm ml-1.5">{badge.description}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     {/* Features Section */}
-                    <section className="py-12 sm:py-16 lg:py-24 border-t border-slate-800/50">
+                    <section id="features" className="py-16 sm:py-20 lg:py-24 border-t border-theme-primary">
                         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-                            {/* Section Header */}
-                            <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-                                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-brand-400 mb-2 sm:mb-4">Features</p>
-                                <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white mb-2 sm:mb-4">
-                                    Everything You Need to Brand Your Calls
+                            <div className="max-w-2xl mb-12 lg:mb-16">
+                                <p className="text-sm font-medium text-brand-600 dark:text-brand-400 mb-3">Platform Features</p>
+                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-theme-primary mb-4">
+                                    Enterprise-Grade Caller ID Management
                                 </h2>
-                                <p className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-2xl mx-auto">
-                                    Complete caller ID branding platform with compliance built in.
+                                <p className="text-base lg:text-lg text-theme-secondary">
+                                    A complete platform for managing branded calling at scale, with built-in compliance and security.
                                 </p>
                             </div>
 
-                            {/* Features Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                                 {features.map((feature, index) => (
                                     <div 
                                         key={index} 
-                                        className="p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:bg-slate-800/70 hover:border-slate-600/50 transition-colors duration-200"
+                                        className="p-6 rounded-lg bg-theme-secondary border border-theme-primary hover:border-theme-secondary transition-colors"
                                     >
-                                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-brand-600/10 text-brand-400 mb-3 sm:mb-4">
-                                            {feature.icon}
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-brand-600/10 text-brand-600 dark:text-brand-400 mb-4">
+                                            <div className="h-6 w-6">{feature.icon}</div>
                                         </div>
-                                        <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                                        <h3 className="text-base font-semibold text-theme-primary mb-2">
                                             {feature.title}
                                         </h3>
-                                        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                        <p className="text-sm text-theme-tertiary leading-relaxed">
                                             {feature.description}
                                         </p>
                                     </div>
@@ -288,40 +407,34 @@ export default function Welcome({ auth }: PageProps) {
                         </div>
                     </section>
 
-                    {/* How It Works Section */}
-                    <section className="py-12 sm:py-16 lg:py-24 border-t border-slate-800/50">
+                    {/* Solutions Section */}
+                    <section id="solutions" className="py-16 sm:py-20 lg:py-24 border-t border-theme-primary bg-theme-secondary">
                         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-                            {/* Section Header */}
-                            <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-                                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-brand-400 mb-2 sm:mb-4">How It Works</p>
-                                <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white mb-2 sm:mb-4">
-                                    Get Started in Minutes
+                            <div className="max-w-2xl mb-12 lg:mb-16">
+                                <p className="text-sm font-medium text-brand-600 dark:text-brand-400 mb-3">Industry Solutions</p>
+                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-theme-primary mb-4">
+                                    Built for Regulated Industries
                                 </h2>
-                                <p className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-2xl mx-auto">
-                                    Four simple steps to branded caller ID.
+                                <p className="text-base lg:text-lg text-theme-secondary">
+                                    Purpose-built features for industries with strict compliance requirements and high call volumes.
                                 </p>
                             </div>
 
-                            {/* Steps */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-12">
-                                {steps.map((step, index) => (
-                                    <div key={index} className="relative">
-                                        {/* Connector line (desktop only) */}
-                                        {index < steps.length - 1 && (
-                                            <div className="hidden lg:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-slate-700 to-transparent" />
-                                        )}
-                                        
-                                        <div className="text-center lg:text-left">
-                                            <span className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-600/20">
-                                                {step.number}
-                                            </span>
-                                            <h3 className="text-sm sm:text-base lg:text-xl font-semibold text-white mt-1 sm:mt-2 mb-1 sm:mb-2">
-                                                {step.title}
-                                            </h3>
-                                            <p className="text-xs sm:text-sm text-slate-400">
-                                                {step.description}
-                                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {useCases.map((useCase, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="p-6 rounded-lg bg-theme-primary border border-theme-primary hover:border-theme-secondary transition-colors"
+                                    >
+                                        <div className="h-8 w-8 text-theme-muted mb-4">
+                                            {useCase.icon}
                                         </div>
+                                        <h3 className="text-lg font-semibold text-theme-primary mb-2">
+                                            {useCase.title}
+                                        </h3>
+                                        <p className="text-sm text-theme-tertiary leading-relaxed">
+                                            {useCase.description}
+                                        </p>
                                     </div>
                                 ))}
                             </div>
@@ -329,58 +442,92 @@ export default function Welcome({ auth }: PageProps) {
                     </section>
 
                     {/* CTA Section */}
-                    <section className="py-12 sm:py-16 lg:py-24 border-t border-slate-800/50">
-                        <div className="max-w-4xl mx-auto px-6 sm:px-8">
-                            <div className="text-center p-6 sm:p-10 lg:p-16 rounded-xl sm:rounded-2xl bg-gradient-to-b from-slate-800/50 to-slate-800/30 border border-slate-700/50">
-                                <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white mb-2 sm:mb-4">
-                                    Ready to Brand Your Calls?
-                                </h2>
-                                <p className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-xl mx-auto mb-5 sm:mb-8">
-                                    Join hundreds of businesses already using BrandCall to improve answer rates and build trust.
-                                </p>
-                                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-                                    <Link 
-                                        href={route('register')} 
-                                        className="inline-flex items-center px-5 py-2.5 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg shadow-lg shadow-brand-600/25 hover:shadow-xl hover:shadow-brand-600/30 hover:-translate-y-0.5 transition-all duration-200"
-                                    >
-                                        Start Free Trial
-                                    </Link>
-                                    <Link 
-                                        href={route('login')} 
-                                        className="inline-flex items-center px-5 py-2.5 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold text-slate-300 border border-slate-700 rounded-lg hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-colors"
-                                    >
-                                        Contact Sales
-                                    </Link>
-                                </div>
+                    <section className="py-16 sm:py-20 lg:py-24 border-t border-theme-primary">
+                        <div className="max-w-3xl mx-auto px-6 sm:px-8 text-center">
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-theme-primary mb-4">
+                                Ready to transform your outbound calling?
+                            </h2>
+                            <p className="text-base lg:text-lg text-theme-secondary max-w-xl mx-auto mb-8">
+                                Schedule a demo with our team to see how BrandCall can improve your answer rates and protect your brand.
+                            </p>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                                <Link 
+                                    href={route('register')} 
+                                    className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-brand-600 rounded-md hover:bg-brand-500 transition-colors"
+                                >
+                                    Request a Demo
+                                </Link>
+                                <a 
+                                    href="mailto:sales@brandcall.io"
+                                    className="inline-flex items-center px-6 py-3 text-sm font-medium text-theme-secondary border border-theme-primary rounded-md hover:bg-theme-tertiary transition-colors"
+                                >
+                                    Contact Sales
+                                </a>
                             </div>
                         </div>
                     </section>
 
                     {/* Footer */}
-                    <footer className="py-6 sm:py-8 lg:py-12 border-t border-slate-800/50">
+                    <footer className="py-12 border-t border-theme-primary">
                         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
-                                {/* Logo */}
-                                <Link href="/" className="flex items-center gap-2">
-                                    <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-600">
-                                        <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm sm:text-base font-semibold text-white">BrandCall</span>
-                                </Link>
-
-                                {/* Links */}
-                                <div className="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm">
-                                    <a href="#" className="text-slate-400 hover:text-white transition-colors">Privacy</a>
-                                    <a href="#" className="text-slate-400 hover:text-white transition-colors">Terms</a>
-                                    <a href="#" className="text-slate-400 hover:text-white transition-colors">Support</a>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                                <div className="col-span-2 md:col-span-1">
+                                    <Link href="/" className="flex items-center gap-2 mb-4">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
+                                            <div className="h-4 w-4 text-white">{Icons.phone}</div>
+                                        </div>
+                                        <span className="text-base font-semibold text-theme-primary">BrandCall</span>
+                                    </Link>
+                                    <p className="text-sm text-theme-muted leading-relaxed">
+                                        Enterprise branded caller ID platform for businesses that need compliance and scale.
+                                    </p>
                                 </div>
-
-                                {/* Copyright */}
-                                <p className="text-xs sm:text-sm text-slate-500">
+                                <div>
+                                    <h4 className="text-sm font-semibold text-theme-primary mb-4">Product</h4>
+                                    <ul className="space-y-3">
+                                        <li><a href="#features" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Features</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Pricing</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">API Documentation</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Integrations</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-semibold text-theme-primary mb-4">Company</h4>
+                                    <ul className="space-y-3">
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">About</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Blog</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Careers</a></li>
+                                        <li><a href="mailto:sales@brandcall.io" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Contact</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-semibold text-theme-primary mb-4">Legal</h4>
+                                    <ul className="space-y-3">
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Privacy Policy</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Terms of Service</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Security</a></li>
+                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Compliance</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="pt-8 border-t border-theme-primary flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <p className="text-sm text-theme-muted">
                                     © 2026 BrandCall. All rights reserved.
                                 </p>
+                                <div className="flex items-center gap-6">
+                                    <a href="#" className="text-theme-muted hover:text-theme-primary transition-colors">
+                                        <span className="sr-only">LinkedIn</span>
+                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" className="text-theme-muted hover:text-theme-primary transition-colors">
+                                        <span className="sr-only">Twitter</span>
+                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                        </svg>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </footer>

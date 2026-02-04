@@ -251,6 +251,8 @@ chore: Maintenance, deps, config
 | `docs/USER-GUIDE.md` | End-user guide with screenshots |
 | `docs/DEPLOYMENT.md` | Server setup and deployment guide |
 | `docs/TCPA-VIOLATIONS-GUIDE.md` | TCPA compliance content |
+| `docs/NUMHUB.md` | NumHub BrandControl platform guide, FAQs, business docs |
+| `docs/NUMHUB-INTEGRATION.md` | NumHub API integration patterns |
 | `TODO.md` | Current task list and roadmap |
 
 ### Core Business Logic
@@ -341,4 +343,4 @@ All passwords: `password`
 
 ---
 
-*Last updated: 2026-02-02*
+*Last updated: 2026-02-04*
