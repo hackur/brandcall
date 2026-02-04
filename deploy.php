@@ -104,6 +104,19 @@ task('artisan:optimize', function () {
     run('{{bin/php}} artisan optimize');
 });
 
+// Clear all caches for rapid iterations
+task('artisan:cache:clear', function () {
+    cd('{{release_path}}');
+    run('{{bin/php}} artisan view:clear');
+    run('{{bin/php}} artisan config:clear');
+    run('{{bin/php}} artisan route:clear');
+    run('{{bin/php}} artisan cache:clear');
+    // Re-optimize after clearing
+    run('{{bin/php}} artisan config:cache');
+    run('{{bin/php}} artisan route:cache');
+    run('{{bin/php}} artisan view:cache');
+});
+
 task('artisan:migrate', function () {
     cd('{{release_path}}');
     run('{{bin/php}} artisan migrate --force');
@@ -212,6 +225,7 @@ task('deploy', [
     'artisan:optimize',
     'deploy:permissions',
     'deploy:symlink',           // Atomic symlink switch
+    'artisan:cache:clear',      // Clear & rebuild caches (cache busting)
     'deploy:unlock',
     'artisan:horizon:terminate',
     'artisan:queue:restart',
