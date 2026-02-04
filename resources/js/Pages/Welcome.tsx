@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { useTheme } from '@/Contexts/ThemeContext';
+import ThemeToggle from '@/Components/ThemeToggle';
 
 // Swiper styles
 import 'swiper/css';
@@ -181,27 +183,7 @@ export default function Welcome({ auth }: PageProps) {
     const swiperRef = useRef<SwiperType | null>(null);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const [isDark, setIsDark] = useState(true);
-
-    // Initialize theme from localStorage or system preference
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('brandcall-theme');
-        if (savedTheme) {
-            setIsDark(savedTheme === 'dark');
-        } else {
-            setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
-        }
-    }, []);
-
-    // Apply theme class to document
-    useEffect(() => {
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-        localStorage.setItem('brandcall-theme', isDark ? 'dark' : 'light');
-    }, [isDark]);
+    const { isDark } = useTheme();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -224,8 +206,6 @@ export default function Welcome({ auth }: PageProps) {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
-
-    const toggleTheme = () => setIsDark(!isDark);
 
     return (
         <div>
@@ -258,16 +238,7 @@ export default function Welcome({ auth }: PageProps) {
                             </div>
 
                             <div className="flex items-center gap-2 sm:gap-4">
-                                {/* Theme Toggle */}
-                                <button
-                                    onClick={toggleTheme}
-                                    className="p-2 rounded-md text-theme-tertiary hover:text-theme-primary hover:bg-theme-tertiary/50 transition-colors"
-                                    aria-label="Toggle theme"
-                                >
-                                    <div className="h-5 w-5">
-                                        {isDark ? Icons.sun : Icons.moon}
-                                    </div>
-                                </button>
+                                <ThemeToggle />
 
                                 {auth.user ? (
                                     <Link 

@@ -5,6 +5,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { FontProvider } from '@/contexts/FontContext';
+import { ThemeProvider } from '@/Contexts/ThemeContext';
 import FontPicker from '@/Components/FontPicker';
 
 const appName = import.meta.env.VITE_APP_NAME || 'BrandCall';
@@ -24,10 +25,12 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <FontProvider>
-                <App {...props} />
-                {showFontPicker && <FontPicker />}
-            </FontProvider>
+            <ThemeProvider defaultTheme="dark">
+                <FontProvider>
+                    <App {...props} />
+                    {showFontPicker && <FontPicker />}
+                </FontProvider>
+            </ThemeProvider>
         );
     },
     progress: {

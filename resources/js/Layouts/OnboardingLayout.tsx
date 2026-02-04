@@ -1,3 +1,4 @@
+import ThemeToggle from '@/Components/ThemeToggle';
 import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren, useState } from 'react';
 
@@ -66,28 +67,31 @@ export default function OnboardingLayout({ children }: PropsWithChildren) {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
     return (
-        <div className="min-h-screen bg-slate-950">
+        <div className="min-h-screen bg-theme-primary transition-colors duration-300">
             {/* Mobile sidebar backdrop */}
             {sidebarOpen && (
                 <div 
-                    className="fixed inset-0 bg-slate-900/80 z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/60 z-40 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 w-64 bg-slate-900 border-r border-slate-800 z-50 transform transition-transform lg:translate-x-0 ${
+            <aside className={`fixed inset-y-0 left-0 w-64 bg-theme-secondary border-r border-theme-primary z-50 transform transition-transform lg:translate-x-0 ${
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full'
             }`}>
                 <div className="flex flex-col h-full">
                     {/* Logo */}
-                    <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-800">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand shadow-brand">
-                            <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                        </div>
-                        <span className="text-xl font-bold text-white font-heading">BrandCall</span>
+                    <div className="flex items-center justify-between px-6 py-5 border-b border-theme-primary">
+                        <Link href="/" className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 shadow-lg shadow-brand-600/25">
+                                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <span className="text-xl font-bold text-theme-primary">BrandCall</span>
+                        </Link>
+                        <ThemeToggle className="lg:hidden" />
                     </div>
 
                     {/* Navigation */}
@@ -101,7 +105,7 @@ export default function OnboardingLayout({ children }: PropsWithChildren) {
                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                                         isActive
                                             ? 'bg-brand-600 text-white'
-                                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                                            : 'text-theme-tertiary hover:bg-theme-tertiary hover:text-theme-primary'
                                     }`}
                                 >
                                     {item.icon}
@@ -112,21 +116,22 @@ export default function OnboardingLayout({ children }: PropsWithChildren) {
                     </nav>
 
                     {/* User menu */}
-                    <div className="p-4 border-t border-slate-800">
+                    <div className="p-4 border-t border-theme-primary">
                         <div className="flex items-center gap-3 px-3 py-2">
-                            <div className="w-9 h-9 rounded-full bg-brand-600/20 flex items-center justify-center text-brand-400 font-semibold">
+                            <div className="w-9 h-9 rounded-full bg-brand-600/20 flex items-center justify-center text-brand-500 font-semibold">
                                 {auth.user?.name?.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white truncate">{auth.user?.name}</p>
-                                <p className="text-xs text-slate-400 truncate">{auth.user?.email}</p>
+                                <p className="text-sm font-medium text-theme-primary truncate">{auth.user?.name}</p>
+                                <p className="text-xs text-theme-muted truncate">{auth.user?.email}</p>
                             </div>
+                            <ThemeToggle className="hidden lg:block" />
                         </div>
                         <Link
                             href={route('logout')}
                             method="post"
                             as="button"
-                            className="w-full mt-2 flex items-center gap-2 px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                            className="w-full mt-2 flex items-center gap-2 px-3 py-2 text-sm text-theme-tertiary hover:text-theme-primary hover:bg-theme-tertiary rounded-lg transition-colors"
                         >
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -140,16 +145,17 @@ export default function OnboardingLayout({ children }: PropsWithChildren) {
             {/* Main content */}
             <div className="lg:pl-64">
                 {/* Mobile header */}
-                <header className="lg:hidden sticky top-0 z-30 flex items-center gap-4 px-4 py-3 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+                <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-theme-secondary/95 backdrop-blur border-b border-theme-primary">
                     <button
                         onClick={() => setSidebarOpen(true)}
-                        className="p-2 text-slate-400 hover:text-white"
+                        className="p-2 text-theme-tertiary hover:text-theme-primary rounded-lg hover:bg-theme-tertiary transition-colors"
                     >
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                    <span className="text-lg font-bold text-white">BrandCall</span>
+                    <span className="text-lg font-bold text-theme-primary">BrandCall</span>
+                    <ThemeToggle />
                 </header>
 
                 {/* Page content */}
