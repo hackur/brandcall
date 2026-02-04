@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -87,6 +88,12 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Developer Tools')
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
+                NavigationItem::make('Log Viewer')
+                    ->url('/log-viewer', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-document-magnifying-glass')
+                    ->group('Developer Tools')
+                    ->sort(6)
+                    ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -103,6 +110,9 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->databaseNotifications()
-            ->sidebarCollapsibleOnDesktop();
+            ->sidebarCollapsibleOnDesktop()
+            ->plugins([
+                FilamentFabricatorPlugin::make(),
+            ]);
     }
 }

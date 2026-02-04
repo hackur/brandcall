@@ -2,7 +2,40 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useState, useEffect, useCallback, useRef, KeyboardEvent } from 'react';
+import axios from 'axios';
+
+// Simple debounce utility
+function debounce<T extends (...args: any[]) => any>(fn: T, delay: number): T & { flush: () => void; cancel: () => void } {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let lastArgs: Parameters<T> | null = null;
+    
+    const debouncedFn = ((...args: Parameters<T>) => {
+        lastArgs = args;
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            fn(...args);
+            timeoutId = null;
+        }, delay);
+    }) as T & { flush: () => void; cancel: () => void };
+    
+    debouncedFn.flush = () => {
+        if (timeoutId && lastArgs) {
+            clearTimeout(timeoutId);
+            fn(...lastArgs);
+            timeoutId = null;
+        }
+    };
+    
+    debouncedFn.cancel = () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+    };
+    
+    return debouncedFn;
+}
 
 interface FormData {
     // Step 1: Account
@@ -28,8 +61,12 @@ interface FormData {
     // Step 4: Phone Numbers
     primary_phone: string;
     phone_ownership: string;
-    // Draft
-    save_as_draft: boolean;
+}
+
+interface DraftStatus {
+    saving: boolean;
+    lastSaved: Date | null;
+    error: string | null;
 }
 
 const steps = [
@@ -79,9 +116,16 @@ const useCases = [
 
 export default function Register() {
     const [currentStep, setCurrentStep] = useState(1);
-    const [draftSaved, setDraftSaved] = useState(false);
+    const [draftStatus, setDraftStatus] = useState<DraftStatus>({
+        saving: false,
+        lastSaved: null,
+        error: null,
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const draftLoadedRef = useRef(false);
+    const saveDraftRef = useRef<ReturnType<typeof debounce> | null>(null);
 
-    const { data, setData, post, processing, errors } = useForm<FormData>({
+    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         // Step 1
         name: '',
         email: '',
@@ -105,20 +149,128 @@ export default function Register() {
         // Step 4
         primary_phone: '',
         phone_ownership: '',
-        // Draft
-        save_as_draft: false,
     });
+
+    // Create debounced save function
+    useEffect(() => {
+        saveDraftRef.current = debounce(async (formData: FormData, step: number) => {
+            // Don't save if submitting or no meaningful data
+            if (isSubmitting || (!formData.name && !formData.email && !formData.company_name)) {
+                return;
+            }
+
+            setDraftStatus(prev => ({ ...prev, saving: true, error: null }));
+
+            try {
+                const response = await axios.post('/register/draft', {
+                    ...formData,
+                    current_step: step,
+                });
+
+                if (response.data.success) {
+                    setDraftStatus({
+                        saving: false,
+                        lastSaved: new Date(),
+                        error: null,
+                    });
+                }
+            } catch (error: any) {
+                // Ignore errors during/after submission
+                if (!isSubmitting) {
+                    setDraftStatus(prev => ({
+                        ...prev,
+                        saving: false,
+                        error: 'Failed to save draft',
+                    }));
+                }
+                console.error('Failed to save draft:', error);
+            }
+        }, 1500);
+
+        return () => {
+            saveDraftRef.current?.cancel();
+        };
+    }, [isSubmitting]);
+
+    // Load draft on mount
+    useEffect(() => {
+        loadDraft();
+    }, []);
+
+    const loadDraft = async () => {
+        try {
+            const response = await axios.get('/register/draft');
+            if (response.data.draft) {
+                const draft = response.data.draft;
+                // Update form with draft data (excluding password fields)
+                const fieldsToRestore: (keyof FormData)[] = [
+                    'name', 'email', 'company_name', 'company_website', 'company_phone',
+                    'company_address', 'company_city', 'company_state', 'company_zip',
+                    'company_country', 'industry', 'monthly_call_volume', 'use_case',
+                    'current_provider', 'has_stir_shaken', 'primary_phone', 'phone_ownership'
+                ];
+                
+                fieldsToRestore.forEach((key) => {
+                    if (draft[key]) {
+                        setData(key, draft[key]);
+                    }
+                });
+                
+                if (draft.current_step && draft.current_step > 1) {
+                    setCurrentStep(draft.current_step);
+                }
+                if (draft.last_saved_at) {
+                    setDraftStatus(prev => ({
+                        ...prev,
+                        lastSaved: new Date(draft.last_saved_at),
+                    }));
+                }
+                draftLoadedRef.current = true;
+            }
+        } catch (error) {
+            console.error('Failed to load draft:', error);
+        }
+    };
+
+    // Save draft function (called manually)
+    const saveDraft = useCallback((formData: FormData, step: number) => {
+        if (!isSubmitting && saveDraftRef.current) {
+            saveDraftRef.current(formData, step);
+        }
+    }, [isSubmitting]);
+
+    // Field change handler
+    const handleFieldChange = (field: keyof FormData, value: string) => {
+        setData(field, value);
+    };
+
+    // Field blur handler - save draft
+    const handleFieldBlur = () => {
+        if (!isSubmitting) {
+            saveDraft(data, currentStep);
+        }
+    };
+
+    // Prevent Enter key from submitting form on non-final steps
+    const handleKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
+        if (e.key === 'Enter' && currentStep < 4) {
+            e.preventDefault();
+            if (validateStep(currentStep)) {
+                nextStep();
+            }
+        }
+    };
 
     const validateStep = (step: number): boolean => {
         switch (step) {
             case 1:
-                return !!(data.name && data.email && data.password && data.password === data.password_confirmation);
+                return !!(data.name && data.email && data.password && data.password === data.password_confirmation && data.password.length >= 8);
             case 2:
-                return !!(data.company_name); // Only company name required
+                return !!(data.company_name);
             case 3:
-                return true; // All optional
+                return true;
             case 4:
-                return true; // All optional
+                return true;
             default:
                 return true;
         }
@@ -126,7 +278,9 @@ export default function Register() {
 
     const nextStep = () => {
         if (validateStep(currentStep) && currentStep < 4) {
-            setCurrentStep(currentStep + 1);
+            const newStep = currentStep + 1;
+            setCurrentStep(newStep);
+            saveDraft(data, newStep);
         }
     };
 
@@ -136,17 +290,43 @@ export default function Register() {
         }
     };
 
-    const saveDraft = () => {
-        setData('save_as_draft', true);
-        setDraftSaved(true);
-        // In real implementation, this would save to localStorage or API
-        localStorage.setItem('brandcall_registration_draft', JSON.stringify(data));
-        setTimeout(() => setDraftSaved(false), 3000);
-    };
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('register'));
+        
+        // Only allow submission from step 4
+        if (currentStep !== 4) {
+            console.warn('Form submitted from wrong step:', currentStep);
+            return;
+        }
+        
+        // Prevent double submission
+        if (isSubmitting || processing) {
+            return;
+        }
+
+        // Cancel any pending draft saves
+        saveDraftRef.current?.cancel();
+        
+        // Mark as submitting to prevent draft saves
+        setIsSubmitting(true);
+        
+        // Submit the form
+        post(route('register'), {
+            onFinish: () => {
+                // Only reset submitting state if we stay on the page (error case)
+                // On success, we'll redirect so this won't matter
+                setIsSubmitting(false);
+            },
+        });
+    };
+
+    // Format time ago for draft status
+    const formatTimeAgo = (date: Date): string => {
+        const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+        if (seconds < 60) return 'just now';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+        return date.toLocaleDateString();
     };
 
     return (
@@ -173,9 +353,34 @@ export default function Register() {
                                 </div>
                                 <span className="text-xl font-bold text-white">BrandCall</span>
                             </Link>
-                            <Link href={route('login')} className="text-sm text-gray-400 hover:text-white">
-                                Already have an account? <span className="text-purple-400">Sign in</span>
-                            </Link>
+                            <div className="flex items-center gap-4">
+                                {/* Draft Status Indicator */}
+                                {!isSubmitting && (draftStatus.saving || draftStatus.lastSaved) && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                        {draftStatus.saving ? (
+                                            <>
+                                                <svg className="h-4 w-4 animate-spin text-purple-400" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                <span className="text-gray-400">Saving...</span>
+                                            </>
+                                        ) : draftStatus.lastSaved ? (
+                                            <>
+                                                <svg className="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <span className="text-gray-400">
+                                                    Draft saved {formatTimeAgo(draftStatus.lastSaved)}
+                                                </span>
+                                            </>
+                                        ) : null}
+                                    </div>
+                                )}
+                                <Link href={route('login')} className="text-sm text-gray-400 hover:text-white">
+                                    Already have an account? <span className="text-purple-400">Sign in</span>
+                                </Link>
+                            </div>
                         </div>
                     </nav>
 
@@ -222,7 +427,7 @@ export default function Register() {
 
                             {/* Form Card */}
                             <div className="rounded-2xl border border-gray-800 bg-gray-900/80 p-8 backdrop-blur">
-                                <form onSubmit={submit}>
+                                <form onSubmit={submit} onKeyDown={handleKeyDown}>
                                     {/* Step 1: Account */}
                                     {currentStep === 1 && (
                                         <div className="space-y-6">
@@ -237,7 +442,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="name"
                                                         value={data.name}
-                                                        onChange={(e) => setData('name', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('name', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
@@ -250,7 +456,8 @@ export default function Register() {
                                                         id="email"
                                                         type="email"
                                                         value={data.email}
-                                                        onChange={(e) => setData('email', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('email', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
@@ -263,7 +470,7 @@ export default function Register() {
                                                         id="password"
                                                         type="password"
                                                         value={data.password}
-                                                        onChange={(e) => setData('password', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('password', e.target.value)}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
@@ -276,7 +483,7 @@ export default function Register() {
                                                         id="password_confirmation"
                                                         type="password"
                                                         value={data.password_confirmation}
-                                                        onChange={(e) => setData('password_confirmation', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('password_confirmation', e.target.value)}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
@@ -299,7 +506,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="company_name"
                                                         value={data.company_name}
-                                                        onChange={(e) => setData('company_name', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('company_name', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="Acme Corporation"
                                                         required
@@ -311,7 +519,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="company_website"
                                                         value={data.company_website}
-                                                        onChange={(e) => setData('company_website', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('company_website', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="https://example.com"
                                                     />
@@ -322,7 +531,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="company_phone"
                                                         value={data.company_phone}
-                                                        onChange={(e) => setData('company_phone', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('company_phone', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="+1 (555) 000-0000"
                                                     />
@@ -333,7 +543,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="company_address"
                                                         value={data.company_address}
-                                                        onChange={(e) => setData('company_address', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('company_address', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="123 Business Ave"
                                                     />
@@ -344,7 +555,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="company_city"
                                                         value={data.company_city}
-                                                        onChange={(e) => setData('company_city', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('company_city', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                     />
                                                 </div>
@@ -355,7 +567,8 @@ export default function Register() {
                                                         <TextInput
                                                             id="company_state"
                                                             value={data.company_state}
-                                                            onChange={(e) => setData('company_state', e.target.value)}
+                                                            onChange={(e) => handleFieldChange('company_state', e.target.value)}
+                                                            onBlur={handleFieldBlur}
                                                             className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         />
                                                     </div>
@@ -364,7 +577,8 @@ export default function Register() {
                                                         <TextInput
                                                             id="company_zip"
                                                             value={data.company_zip}
-                                                            onChange={(e) => setData('company_zip', e.target.value)}
+                                                            onChange={(e) => handleFieldChange('company_zip', e.target.value)}
+                                                            onBlur={handleFieldBlur}
                                                             className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         />
                                                     </div>
@@ -387,7 +601,8 @@ export default function Register() {
                                                     <select
                                                         id="industry"
                                                         value={data.industry}
-                                                        onChange={(e) => setData('industry', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('industry', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                     >
                                                         <option value="">Select your industry</option>
@@ -402,7 +617,8 @@ export default function Register() {
                                                     <select
                                                         id="monthly_call_volume"
                                                         value={data.monthly_call_volume}
-                                                        onChange={(e) => setData('monthly_call_volume', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('monthly_call_volume', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                     >
                                                         <option value="">Select volume</option>
@@ -417,7 +633,8 @@ export default function Register() {
                                                     <select
                                                         id="use_case"
                                                         value={data.use_case}
-                                                        onChange={(e) => setData('use_case', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('use_case', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                     >
                                                         <option value="">Select use case</option>
@@ -432,7 +649,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="current_provider"
                                                         value={data.current_provider}
-                                                        onChange={(e) => setData('current_provider', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('current_provider', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="e.g., Twilio, RingCentral, Vonage"
                                                     />
@@ -448,7 +666,7 @@ export default function Register() {
                                                                     name="has_stir_shaken"
                                                                     value={option.toLowerCase().replace(' ', '_')}
                                                                     checked={data.has_stir_shaken === option.toLowerCase().replace(' ', '_')}
-                                                                    onChange={(e) => setData('has_stir_shaken', e.target.value)}
+                                                                    onChange={(e) => handleFieldChange('has_stir_shaken', e.target.value)}
                                                                     className="h-4 w-4 border-gray-700 bg-gray-800 text-purple-500 focus:ring-purple-500"
                                                                 />
                                                                 <span className="ml-2 text-gray-300">{option}</span>
@@ -474,7 +692,8 @@ export default function Register() {
                                                     <TextInput
                                                         id="primary_phone"
                                                         value={data.primary_phone}
-                                                        onChange={(e) => setData('primary_phone', e.target.value)}
+                                                        onChange={(e) => handleFieldChange('primary_phone', e.target.value)}
+                                                        onBlur={handleFieldBlur}
                                                         className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="+1 (555) 000-0000"
                                                     />
@@ -497,7 +716,7 @@ export default function Register() {
                                                                     name="phone_ownership"
                                                                     value={option.value}
                                                                     checked={data.phone_ownership === option.value}
-                                                                    onChange={(e) => setData('phone_ownership', e.target.value)}
+                                                                    onChange={(e) => handleFieldChange('phone_ownership', e.target.value)}
                                                                     className="h-4 w-4 border-gray-700 bg-gray-800 text-purple-500 focus:ring-purple-500"
                                                                 />
                                                                 <span className="ml-2 text-gray-300">{option.label}</span>
@@ -541,7 +760,8 @@ export default function Register() {
                                                 <button
                                                     type="button"
                                                     onClick={prevStep}
-                                                    className="inline-flex items-center gap-2 text-gray-400 hover:text-white"
+                                                    disabled={isSubmitting}
+                                                    className="inline-flex items-center gap-2 text-gray-400 hover:text-white disabled:opacity-50"
                                                 >
                                                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -552,20 +772,14 @@ export default function Register() {
                                         </div>
 
                                         <div className="flex items-center gap-4">
-                                            {currentStep > 1 && (
+                                            {currentStep < 4 && (
                                                 <button
+                                                    key={`continue-${currentStep}`}
                                                     type="button"
-                                                    onClick={saveDraft}
-                                                    className="text-sm text-gray-400 hover:text-white"
-                                                >
-                                                    {draftSaved ? '✓ Saved!' : 'Save as draft'}
-                                                </button>
-                                            )}
-
-                                            {currentStep < 4 ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={nextStep}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        nextStep();
+                                                    }}
                                                     disabled={!validateStep(currentStep)}
                                                     className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
                                                 >
@@ -574,16 +788,30 @@ export default function Register() {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                     </svg>
                                                 </button>
-                                            ) : (
+                                            )}
+                                            {currentStep === 4 && (
                                                 <button
+                                                    key="submit-account"
                                                     type="submit"
-                                                    disabled={processing || !validateStep(1)}
+                                                    disabled={isSubmitting || processing || !validateStep(1)}
                                                     className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
                                                 >
-                                                    {processing ? 'Creating...' : 'Create Account'}
-                                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                    </svg>
+                                                    {(isSubmitting || processing) ? (
+                                                        <>
+                                                            <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                            </svg>
+                                                            Creating Account...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            Create Account
+                                                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </>
+                                                    )}
                                                 </button>
                                             )}
                                         </div>
@@ -592,9 +820,10 @@ export default function Register() {
                             </div>
 
                             {/* Skip link */}
-                            {currentStep > 1 && currentStep < 4 && (
+                            {currentStep > 1 && currentStep < 4 && !isSubmitting && (
                                 <div className="mt-4 text-center">
                                     <button
+                                        type="button"
                                         onClick={() => setCurrentStep(4)}
                                         className="text-sm text-gray-500 hover:text-gray-400"
                                     >

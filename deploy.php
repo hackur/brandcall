@@ -175,20 +175,20 @@ task('backup:database', function () {
 
     // Get DB credentials from .env
     $envFile = '{{deploy_path}}/shared/.env';
-    
+
     writeln('<info>Creating database backup...</info>');
-    
+
     // Run mysqldump with credentials from environment
     run("source {$envFile} && mysqldump --single-transaction --routines --triggers " .
         "-u\$DB_USERNAME -p\$DB_PASSWORD \$DB_DATABASE | gzip > {$backupFile}");
-    
+
     // Show backup info
     $size = run("du -h {$backupFile} | cut -f1");
     writeln("<info>✅ Backup created: {$backupFile} ({$size})</info>");
-    
+
     // Cleanup old backups (keep last 30 days)
     run("find {$backupDir} -name 'brandcall_*.sql.gz' -type f -mtime +30 -delete");
-    
+
     // List recent backups
     writeln('<comment>Recent backups:</comment>');
     run("ls -lh {$backupDir}/brandcall_*.sql.gz 2>/dev/null | tail -5 || true");

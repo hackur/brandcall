@@ -17,12 +17,14 @@
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.16",
         "laravel/tinker": "^2.10.1",
+        "opcodesio/log-viewer": "^3.21",
         "spatie/laravel-activitylog": "^4.11",
         "spatie/laravel-backup": "^9.4",
         "spatie/laravel-health": "^1.35",
         "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-permission": "^6.24",
-        "tightenco/ziggy": "^2.0"
+        "tightenco/ziggy": "^2.0",
+        "z3d0x/filament-fabricator": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",

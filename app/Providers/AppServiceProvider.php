@@ -50,6 +50,9 @@ class AppServiceProvider extends ServiceProvider
         // API Documentation (Scramble) - requires super-admin role
         Gate::define('viewApiDocs', fn ($user) => $isSuperAdmin($user));
 
+        // Log Viewer authorization - requires super-admin role
+        Gate::define('viewLogViewer', fn ($user) => $isSuperAdmin($user));
+
         // Pulse user resolution
         Pulse::user(fn ($user) => [
             'name' => $user->name,

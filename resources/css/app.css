@@ -7,6 +7,13 @@
    =================================== */
 
 @layer base {
+    /* Prevent horizontal scroll on mobile */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100vw;
+    }
+    
     /* CSS Custom Properties */
     :root {
         /* Colors */
@@ -301,7 +308,8 @@
 
     .glow::before {
         content: '';
-        @apply absolute inset-0 rounded-inherit blur-xl opacity-50;
+        @apply absolute inset-0 blur-xl opacity-50;
+        border-radius: inherit;
         background: inherit;
         z-index: -1;
     }
@@ -391,5 +399,20 @@
 
     .aspect-square {
         aspect-ratio: 1 / 1;
+    }
+
+    /* Swiper Carousel Customization */
+    .swiper-pagination {
+        position: relative !important;
+        bottom: 0 !important;
+        margin-top: 1rem;
+    }
+
+    .swiper-pagination-bullet {
+        border-radius: 9999px;
+    }
+
+    .swiper-slide {
+        height: auto !important;
     }
 }
