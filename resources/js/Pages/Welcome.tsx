@@ -1,6 +1,6 @@
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -66,9 +66,38 @@ const steps = [
 
 export default function Welcome({ auth }: PageProps) {
     const swiperRef = useRef<SwiperType | null>(null);
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            const scrollThreshold = 10; // Minimum scroll before triggering
+            
+            if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) {
+                return;
+            }
+            
+            // Always show header at top of page
+            if (currentScrollY < 50) {
+                setIsHeaderVisible(true);
+            } else if (currentScrollY > lastScrollY) {
+                // Scrolling down - hide header
+                setIsHeaderVisible(false);
+            } else {
+                // Scrolling up - show header
+                setIsHeaderVisible(true);
+            }
+            
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
 
     return (
-        <div className="overflow-x-clip">
+        <div>
             <Head title="BrandCall - Branded Caller ID Platform" />
             
             <div className="relative min-h-screen bg-slate-950">
@@ -82,8 +111,12 @@ export default function Welcome({ auth }: PageProps) {
 
                 {/* Content */}
                 <div className="relative z-10">
-                    {/* Navigation - Sticky header with glass effect */}
-                    <nav className="sticky top-0 z-50 px-5 sm:px-6 py-3 sm:py-4 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/50">
+                    {/* Navigation - Fixed header with hide/show on scroll */}
+                    <nav 
+                        className={`fixed top-0 left-0 right-0 z-50 px-5 sm:px-6 py-3 sm:py-4 bg-slate-950/95 backdrop-blur-lg border-b border-slate-800/50 transition-transform duration-300 ${
+                            isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
+                        }`}
+                    >
                         <div className="max-w-7xl mx-auto flex items-center justify-between">
                             {/* Logo */}
                             <Link href="/" className="flex items-center gap-2 sm:gap-3">
@@ -123,6 +156,9 @@ export default function Welcome({ auth }: PageProps) {
                             </div>
                         </div>
                     </nav>
+                    
+                    {/* Spacer for fixed header */}
+                    <div className="h-14 sm:h-16" />
 
                     {/* Hero Section */}
                     <section className="py-12 sm:py-16 lg:py-32">
