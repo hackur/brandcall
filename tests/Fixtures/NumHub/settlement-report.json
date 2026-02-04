@@ -1,0 +1,86 @@
+{
+    "reportId": "rpt_202601_abc123",
+    "period": {
+        "startDate": "2026-01-01",
+        "endDate": "2026-01-31",
+        "month": "2026-01",
+        "days": 31
+    },
+    "client": {
+        "clientId": "brandcall_prod_001",
+        "companyName": "BrandCall Inc",
+        "accountType": "OSP"
+    },
+    "summary": {
+        "totalCalls": 152847,
+        "brandedCalls": 148523,
+        "unbrandedCalls": 4324,
+        "brandingRate": 97.17,
+        "totalEntities": 45,
+        "activeEntities": 42,
+        "totalIdentities": 128,
+        "activeIdentities": 115,
+        "totalPhoneNumbers": 1547
+    },
+    "billing": {
+        "currency": "USD",
+        "brandedCallFee": 0.005,
+        "totalBrandedCharges": 742.62,
+        "monthlyPlatformFee": 500.00,
+        "additionalIdentityFee": 0.00,
+        "additionalNumberFee": 0.00,
+        "totalCharges": 1242.62,
+        "credits": 0.00,
+        "previousBalance": 0.00,
+        "amountDue": 1242.62,
+        "dueDate": "2026-02-15"
+    },
+    "breakdown": {
+        "byEntity": [
+            {
+                "NumhubEntityId": "ent_abc123def456",
+                "companyName": "Test Insurance Company LLC",
+                "calls": 6399,
+                "identities": 3,
+                "phoneNumbers": 40,
+                "charges": 32.00
+            },
+            {
+                "NumhubEntityId": "ent_def456ghi789",
+                "companyName": "Acme Healthcare",
+                "calls": 15234,
+                "identities": 5,
+                "phoneNumbers": 75,
+                "charges": 76.17
+            }
+        ],
+        "byDay": [
+            {
+                "date": "2026-01-01",
+                "calls": 4521,
+                "brandedCalls": 4398
+            },
+            {
+                "date": "2026-01-02",
+                "calls": 5102,
+                "brandedCalls": 4987
+            }
+        ]
+    },
+    "attestation": {
+        "levelA": {
+            "calls": 125000,
+            "percentage": 84.13
+        },
+        "levelB": {
+            "calls": 20523,
+            "percentage": 13.82
+        },
+        "levelC": {
+            "calls": 3000,
+            "percentage": 2.02
+        }
+    },
+    "generatedAt": "2026-02-01T00:15:00Z",
+    "downloadUrl": "https://reports.numhub.com/settlement/rpt_202601_abc123.pdf"
+}

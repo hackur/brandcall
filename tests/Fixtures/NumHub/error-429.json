@@ -1,0 +1,23 @@
+{
+    "success": false,
+    "error": {
+        "code": "RATE_LIMIT_EXCEEDED",
+        "message": "You have exceeded the rate limit for API requests.",
+        "details": [
+            {
+                "code": "TOO_MANY_REQUESTS",
+                "message": "Rate limit: 100 requests per minute. You have made 105 requests in the current window."
+            }
+        ],
+        "rateLimit": {
+            "limit": 100,
+            "remaining": 0,
+            "resetAt": "2026-02-04T14:01:00Z",
+            "retryAfter": 45,
+            "window": "1m"
+        },
+        "hint": "Please wait before making additional requests. Consider implementing exponential backoff in your client."
+    },
+    "requestId": "req_ghi789rst345",
+    "timestamp": "2026-02-04T14:00:15Z"
+}

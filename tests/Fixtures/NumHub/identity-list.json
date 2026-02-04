@@ -1,0 +1,76 @@
+{
+    "data": [
+        {
+            "NumhubIdentityId": "idt_001abc",
+            "NumhubEntityId": "ent_abc123def456",
+            "displayName": "Test Insurance Co",
+            "displayNumber": "+17025551234",
+            "callReason": "Policy Renewal",
+            "logoUrl": "https://cdn.numhub.com/logos/idt_001abc.png",
+            "status": "active",
+            "attestationLevel": "A",
+            "phoneNumbers": {
+                "total": 25,
+                "active": 23,
+                "pending": 2
+            },
+            "createdAt": "2026-01-25T10:00:00Z",
+            "updatedAt": "2026-02-01T15:30:00Z",
+            "lastCallAt": "2026-02-04T13:45:00Z",
+            "monthlyCallVolume": 4523
+        },
+        {
+            "NumhubIdentityId": "idt_002def",
+            "NumhubEntityId": "ent_abc123def456",
+            "displayName": "Test Insurance Claims",
+            "displayNumber": "+17025551235",
+            "callReason": "Claims Update",
+            "logoUrl": "https://cdn.numhub.com/logos/idt_001abc.png",
+            "status": "active",
+            "attestationLevel": "A",
+            "phoneNumbers": {
+                "total": 10,
+                "active": 10,
+                "pending": 0
+            },
+            "createdAt": "2026-01-28T14:00:00Z",
+            "updatedAt": "2026-01-30T09:15:00Z",
+            "lastCallAt": "2026-02-04T12:30:00Z",
+            "monthlyCallVolume": 1876
+        },
+        {
+            "NumhubIdentityId": "idt_003ghi",
+            "NumhubEntityId": "ent_abc123def456",
+            "displayName": "Test Insurance Support",
+            "displayNumber": "+17025551236",
+            "callReason": "Customer Support",
+            "logoUrl": null,
+            "status": "pending",
+            "attestationLevel": null,
+            "phoneNumbers": {
+                "total": 5,
+                "active": 0,
+                "pending": 5
+            },
+            "createdAt": "2026-02-03T16:00:00Z",
+            "updatedAt": "2026-02-03T16:00:00Z",
+            "lastCallAt": null,
+            "monthlyCallVolume": 0
+        }
+    ],
+    "pagination": {
+        "currentPage": 1,
+        "perPage": 25,
+        "totalItems": 3,
+        "totalPages": 1,
+        "hasNextPage": false,
+        "hasPreviousPage": false
+    },
+    "summary": {
+        "totalIdentities": 3,
+        "activeIdentities": 2,
+        "pendingIdentities": 1,
+        "totalPhoneNumbers": 40,
+        "totalMonthlyCallVolume": 6399
+    }
+}

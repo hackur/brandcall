@@ -1,0 +1,31 @@
+{
+    "success": false,
+    "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "The request contains invalid data. Please review the errors and try again.",
+        "details": [
+            {
+                "field": "companyInfo.ein",
+                "code": "INVALID_FORMAT",
+                "message": "EIN must be in format XX-XXXXXXX"
+            },
+            {
+                "field": "companyInfo.phone",
+                "code": "INVALID_PHONE",
+                "message": "Phone number must be a valid US phone number in E.164 format"
+            },
+            {
+                "field": "contactInfo.email",
+                "code": "INVALID_EMAIL",
+                "message": "Please provide a valid email address"
+            },
+            {
+                "field": "callingProfile.estimatedMonthlyCallVolume",
+                "code": "REQUIRED",
+                "message": "Monthly call volume estimate is required"
+            }
+        ]
+    },
+    "requestId": "req_abc123xyz789",
+    "timestamp": "2026-02-04T14:00:00Z"
+}

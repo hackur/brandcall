@@ -1,0 +1,81 @@
+{
+    "NumhubEntityId": "ent_abc123def456",
+    "status": 5,
+    "statusDescription": "Approved",
+    "createdAt": "2026-01-15T10:00:00Z",
+    "updatedAt": "2026-02-04T14:00:00Z",
+    "submittedAt": "2026-01-20T09:00:00Z",
+    "approvedAt": "2026-02-04T14:00:00Z",
+    "companyInfo": {
+        "legalName": "Test Insurance Company LLC",
+        "dba": "Test Insurance Co",
+        "ein": "12-3456789",
+        "address": {
+            "street1": "123 Main Street",
+            "street2": "Suite 100",
+            "city": "Las Vegas",
+            "state": "NV",
+            "zipCode": "89101",
+            "country": "US"
+        },
+        "phone": "+17025551234",
+        "website": "https://testinsurance.com",
+        "industry": "Insurance",
+        "industryCode": "524210"
+    },
+    "contactInfo": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@testinsurance.com",
+        "phone": "+17025559876",
+        "title": "IT Director"
+    },
+    "callingProfile": {
+        "estimatedMonthlyCallVolume": "10000-50000",
+        "primaryUseCase": "Customer service callbacks",
+        "callReasons": [
+            "Policy renewals",
+            "Claims follow-up",
+            "Appointment reminders"
+        ]
+    },
+    "documents": [
+        {
+            "id": "doc_001",
+            "type": "business_license",
+            "filename": "business_license.pdf",
+            "uploadedAt": "2026-01-18T11:00:00Z",
+            "status": "verified"
+        },
+        {
+            "id": "doc_002",
+            "type": "loa",
+            "filename": "letter_of_authorization.pdf",
+            "uploadedAt": "2026-01-18T11:05:00Z",
+            "status": "verified"
+        }
+    ],
+    "vettingStatus": {
+        "score": 95,
+        "level": "A",
+        "completedAt": "2026-02-01T16:00:00Z",
+        "provider": "internal",
+        "flags": []
+    },
+    "otpVerified": true,
+    "otpVerifiedAt": "2026-01-19T14:30:00Z",
+    "attestation": {
+        "level": "A",
+        "description": "Full Attestation - The originating service provider has authenticated the calling party",
+        "assignedAt": "2026-02-04T14:00:00Z"
+    },
+    "identities": [
+        {
+            "NumhubIdentityId": "idt_xyz789",
+            "displayName": "Test Insurance Co",
+            "phoneNumbers": 25,
+            "status": "active"
+        }
+    ],
+    "message": "Application approved. You may now configure display identities and phone numbers."
+}

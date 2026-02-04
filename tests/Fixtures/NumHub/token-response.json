@@ -1,0 +1,24 @@
+{
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkJyYW5kQ2FsbCBUZXN0IiwiYWRtaW4iOnRydWUsImlhdCI6MTcwNzA4MTYwMCwiZXhwIjoxNzA3MTY4MDAwfQ.mock_signature",
+    "token_type": "Bearer",
+    "expires_in": 86400,
+    "refresh_token": null,
+    "scope": "api:full",
+    "user": {
+        "id": "usr_test_12345",
+        "email": "api@brandcall.io",
+        "name": "BrandCall API User",
+        "client_id": "brandcall_prod_001",
+        "role": "osp_admin",
+        "permissions": [
+            "application:read",
+            "application:write",
+            "identity:read",
+            "identity:write",
+            "reports:read",
+            "deals:read",
+            "deals:write"
+        ],
+        "created_at": "2025-01-15T00:00:00Z"
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "NumhubEntityId": "ent_abc123def456",
+    "status": 1,
+    "statusDescription": "Saved",
+    "createdAt": "2026-02-04T14:00:00Z",
+    "updatedAt": "2026-02-04T14:00:00Z",
+    "companyInfo": {
+        "legalName": "Test Insurance Company LLC",
+        "dba": "Test Insurance Co",
+        "ein": "12-3456789",
+        "address": {
+            "street1": "123 Main Street",
+            "street2": "Suite 100",
+            "city": "Las Vegas",
+            "state": "NV",
+            "zipCode": "89101",
+            "country": "US"
+        },
+        "phone": "+17025551234",
+        "website": "https://testinsurance.com",
+        "industry": "Insurance",
+        "industryCode": "524210"
+    },
+    "contactInfo": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@testinsurance.com",
+        "phone": "+17025559876",
+        "title": "IT Director"
+    },
+    "callingProfile": {
+        "estimatedMonthlyCallVolume": "10000-50000",
+        "primaryUseCase": "Customer service callbacks",
+        "callReasons": [
+            "Policy renewals",
+            "Claims follow-up",
+            "Appointment reminders"
+        ]
+    },
+    "documents": [],
+    "vettingStatus": null,
+    "otpVerified": false,
+    "message": "Application saved successfully. Please upload required documents and submit for review."
+}
