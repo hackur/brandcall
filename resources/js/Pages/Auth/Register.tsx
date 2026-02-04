@@ -343,17 +343,17 @@ export default function Register() {
 
                 <div className="relative z-10 flex min-h-screen flex-col">
                     {/* Header */}
-                    <nav className="px-6 py-4">
+                    <nav className="px-4 py-3 sm:px-6 sm:py-4">
                         <div className="mx-auto flex max-w-7xl items-center justify-between">
                             <Link href="/" className="flex items-center gap-2">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600">
-                                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600">
+                                    <svg className="h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                 </div>
-                                <span className="text-xl font-bold text-white">BrandCall</span>
+                                <span className="text-lg sm:text-xl font-bold text-white">BrandCall</span>
                             </Link>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 sm:gap-4">
                                 {/* Draft Status Indicator */}
                                 {!isSubmitting && (draftStatus.saving || draftStatus.lastSaved) && (
                                     <div className="flex items-center gap-2 text-sm">
@@ -377,24 +377,24 @@ export default function Register() {
                                         ) : null}
                                     </div>
                                 )}
-                                <Link href={route('login')} className="text-sm text-gray-400 hover:text-white">
-                                    Already have an account? <span className="text-purple-400">Sign in</span>
+                                <Link href={route('login')} className="text-xs sm:text-sm text-gray-400 hover:text-white">
+                                    <span className="hidden sm:inline">Already have an account? </span><span className="text-purple-400">Sign in</span>
                                 </Link>
                             </div>
                         </div>
                     </nav>
 
                     {/* Main Content */}
-                    <div className="flex flex-1 items-center justify-center px-6 py-12">
+                    <div className="flex flex-1 items-center justify-center px-4 py-4 sm:px-6 sm:py-8">
                         <div className="w-full max-w-2xl">
                             {/* Progress Steps */}
-                            <div className="mb-8">
+                            <div className="mb-4 sm:mb-6">
                                 <div className="flex items-center justify-between">
                                     {steps.map((step, index) => (
                                         <div key={step.id} className="flex flex-1 items-center">
                                             <div className="flex flex-col items-center">
                                                 <div
-                                                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all ${
+                                                    className={`flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 text-xs sm:text-sm font-semibold transition-all ${
                                                         currentStep > step.id
                                                             ? 'border-purple-500 bg-purple-500 text-white'
                                                             : currentStep === step.id
@@ -403,22 +403,21 @@ export default function Register() {
                                                     }`}
                                                 >
                                                     {currentStep > step.id ? (
-                                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                                        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
                                                     ) : (
                                                         step.id
                                                     )}
                                                 </div>
-                                                <div className="mt-2 text-center">
-                                                    <div className={`text-xs font-medium ${currentStep >= step.id ? 'text-white' : 'text-gray-500'}`}>
+                                                <div className="mt-1 sm:mt-2 text-center">
+                                                    <div className={`text-[10px] sm:text-xs font-medium ${currentStep >= step.id ? 'text-white' : 'text-gray-500'}`}>
                                                         {step.name}
                                                     </div>
-                                                    <div className="hidden text-xs text-gray-600 sm:block">{step.description}</div>
                                                 </div>
                                             </div>
                                             {index < steps.length - 1 && (
-                                                <div className={`mx-2 h-0.5 flex-1 ${currentStep > step.id ? 'bg-purple-500' : 'bg-gray-800'}`} />
+                                                <div className={`mx-1 sm:mx-2 h-0.5 flex-1 ${currentStep > step.id ? 'bg-purple-500' : 'bg-gray-800'}`} />
                                             )}
                                         </div>
                                     ))}
@@ -426,65 +425,65 @@ export default function Register() {
                             </div>
 
                             {/* Form Card */}
-                            <div className="rounded-2xl border border-gray-800 bg-gray-900/80 p-8 backdrop-blur">
+                            <div className="rounded-xl sm:rounded-2xl border border-gray-800 bg-gray-900/80 p-4 sm:p-6 backdrop-blur">
                                 <form onSubmit={submit} onKeyDown={handleKeyDown}>
                                     {/* Step 1: Account */}
                                     {currentStep === 1 && (
-                                        <div className="space-y-6">
+                                        <div className="space-y-3 sm:space-y-4">
                                             <div>
-                                                <h2 className="text-2xl font-bold text-white">Create your account</h2>
-                                                <p className="mt-1 text-gray-400">Start with your login credentials</p>
+                                                <h2 className="text-lg sm:text-xl font-bold text-white">Create your account</h2>
+                                                <p className="text-sm text-gray-400">Start with your login credentials</p>
                                             </div>
 
-                                            <div className="grid gap-6 sm:grid-cols-2">
+                                            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                                                 <div className="sm:col-span-2">
-                                                    <InputLabel htmlFor="name" value="Full Name" className="text-gray-300" />
+                                                    <InputLabel htmlFor="name" value="Full Name" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="name"
                                                         value={data.name}
                                                         onChange={(e) => handleFieldChange('name', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
-                                                    <InputError message={errors.name} className="mt-2" />
+                                                    <InputError message={errors.name} className="mt-1" />
                                                 </div>
 
                                                 <div className="sm:col-span-2">
-                                                    <InputLabel htmlFor="email" value="Work Email" className="text-gray-300" />
+                                                    <InputLabel htmlFor="email" value="Work Email" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="email"
                                                         type="email"
                                                         value={data.email}
                                                         onChange={(e) => handleFieldChange('email', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
-                                                    <InputError message={errors.email} className="mt-2" />
+                                                    <InputError message={errors.email} className="mt-1" />
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="password" value="Password" className="text-gray-300" />
+                                                    <InputLabel htmlFor="password" value="Password" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="password"
                                                         type="password"
                                                         value={data.password}
                                                         onChange={(e) => handleFieldChange('password', e.target.value)}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
-                                                    <InputError message={errors.password} className="mt-2" />
+                                                    <InputError message={errors.password} className="mt-1" />
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="text-gray-300" />
+                                                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="password_confirmation"
                                                         type="password"
                                                         value={data.password_confirmation}
                                                         onChange={(e) => handleFieldChange('password_confirmation', e.target.value)}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         required
                                                     />
                                                 </div>
@@ -494,92 +493,92 @@ export default function Register() {
 
                                     {/* Step 2: Business Info */}
                                     {currentStep === 2 && (
-                                        <div className="space-y-6">
+                                        <div className="space-y-3 sm:space-y-4">
                                             <div>
-                                                <h2 className="text-2xl font-bold text-white">Business Information</h2>
-                                                <p className="mt-1 text-gray-400">Tell us about your company</p>
+                                                <h2 className="text-lg sm:text-xl font-bold text-white">Business Information</h2>
+                                                <p className="text-sm text-gray-400">Tell us about your company</p>
                                             </div>
 
-                                            <div className="grid gap-6 sm:grid-cols-2">
+                                            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                                                 <div className="sm:col-span-2">
-                                                    <InputLabel htmlFor="company_name" value="Company Name *" className="text-gray-300" />
+                                                    <InputLabel htmlFor="company_name" value="Company Name *" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="company_name"
                                                         value={data.company_name}
                                                         onChange={(e) => handleFieldChange('company_name', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="Acme Corporation"
                                                         required
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="company_website" value="Website" className="text-gray-300" />
+                                                    <InputLabel htmlFor="company_website" value="Website" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="company_website"
                                                         value={data.company_website}
                                                         onChange={(e) => handleFieldChange('company_website', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="https://example.com"
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="company_phone" value="Business Phone" className="text-gray-300" />
+                                                    <InputLabel htmlFor="company_phone" value="Business Phone" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="company_phone"
                                                         value={data.company_phone}
                                                         onChange={(e) => handleFieldChange('company_phone', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="+1 (555) 000-0000"
                                                     />
                                                 </div>
 
                                                 <div className="sm:col-span-2">
-                                                    <InputLabel htmlFor="company_address" value="Street Address" className="text-gray-300" />
+                                                    <InputLabel htmlFor="company_address" value="Street Address" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="company_address"
                                                         value={data.company_address}
                                                         onChange={(e) => handleFieldChange('company_address', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="123 Business Ave"
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="company_city" value="City" className="text-gray-300" />
+                                                    <InputLabel htmlFor="company_city" value="City" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="company_city"
                                                         value={data.company_city}
                                                         onChange={(e) => handleFieldChange('company_city', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                     />
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-2 gap-3">
                                                     <div>
-                                                        <InputLabel htmlFor="company_state" value="State" className="text-gray-300" />
+                                                        <InputLabel htmlFor="company_state" value="State" className="text-gray-300 text-sm" />
                                                         <TextInput
                                                             id="company_state"
                                                             value={data.company_state}
                                                             onChange={(e) => handleFieldChange('company_state', e.target.value)}
                                                             onBlur={handleFieldBlur}
-                                                            className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                            className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <InputLabel htmlFor="company_zip" value="ZIP" className="text-gray-300" />
+                                                        <InputLabel htmlFor="company_zip" value="ZIP" className="text-gray-300 text-sm" />
                                                         <TextInput
                                                             id="company_zip"
                                                             value={data.company_zip}
                                                             onChange={(e) => handleFieldChange('company_zip', e.target.value)}
                                                             onBlur={handleFieldBlur}
-                                                            className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                            className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         />
                                                     </div>
                                                 </div>
@@ -589,21 +588,21 @@ export default function Register() {
 
                                     {/* Step 3: KYC / Qualification */}
                                     {currentStep === 3 && (
-                                        <div className="space-y-6">
+                                        <div className="space-y-3 sm:space-y-4">
                                             <div>
-                                                <h2 className="text-2xl font-bold text-white">Qualification</h2>
-                                                <p className="mt-1 text-gray-400">Help us understand your calling needs (optional)</p>
+                                                <h2 className="text-lg sm:text-xl font-bold text-white">Qualification</h2>
+                                                <p className="text-sm text-gray-400">Help us understand your calling needs (optional)</p>
                                             </div>
 
-                                            <div className="grid gap-6">
+                                            <div className="grid gap-3 sm:gap-4">
                                                 <div>
-                                                    <InputLabel htmlFor="industry" value="Industry" className="text-gray-300" />
+                                                    <InputLabel htmlFor="industry" value="Industry" className="text-gray-300 text-sm" />
                                                     <select
                                                         id="industry"
                                                         value={data.industry}
                                                         onChange={(e) => handleFieldChange('industry', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                     >
                                                         <option value="">Select your industry</option>
                                                         {industries.map((industry) => (
@@ -613,13 +612,13 @@ export default function Register() {
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="monthly_call_volume" value="Estimated Monthly Call Volume" className="text-gray-300" />
+                                                    <InputLabel htmlFor="monthly_call_volume" value="Estimated Monthly Call Volume" className="text-gray-300 text-sm" />
                                                     <select
                                                         id="monthly_call_volume"
                                                         value={data.monthly_call_volume}
                                                         onChange={(e) => handleFieldChange('monthly_call_volume', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                     >
                                                         <option value="">Select volume</option>
                                                         {volumeOptions.map((option) => (
@@ -629,13 +628,13 @@ export default function Register() {
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="use_case" value="Primary Use Case" className="text-gray-300" />
+                                                    <InputLabel htmlFor="use_case" value="Primary Use Case" className="text-gray-300 text-sm" />
                                                     <select
                                                         id="use_case"
                                                         value={data.use_case}
                                                         onChange={(e) => handleFieldChange('use_case', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                     >
                                                         <option value="">Select use case</option>
                                                         {useCases.map((useCase) => (
@@ -645,20 +644,20 @@ export default function Register() {
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="current_provider" value="Current Voice/Calling Provider" className="text-gray-300" />
+                                                    <InputLabel htmlFor="current_provider" value="Current Voice/Calling Provider" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="current_provider"
                                                         value={data.current_provider}
                                                         onChange={(e) => handleFieldChange('current_provider', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="e.g., Twilio, RingCentral, Vonage"
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel value="Are you currently using STIR/SHAKEN?" className="text-gray-300" />
-                                                    <div className="mt-2 flex gap-4">
+                                                    <InputLabel value="Are you currently using STIR/SHAKEN?" className="text-gray-300 text-sm" />
+                                                    <div className="mt-1.5 flex flex-wrap gap-3 sm:gap-4">
                                                         {['Yes', 'No', 'Not sure'].map((option) => (
                                                             <label key={option} className="flex items-center">
                                                                 <input
@@ -667,9 +666,9 @@ export default function Register() {
                                                                     value={option.toLowerCase().replace(' ', '_')}
                                                                     checked={data.has_stir_shaken === option.toLowerCase().replace(' ', '_')}
                                                                     onChange={(e) => handleFieldChange('has_stir_shaken', e.target.value)}
-                                                                    className="h-4 w-4 border-gray-700 bg-gray-800 text-purple-500 focus:ring-purple-500"
+                                                                    className="h-3.5 w-3.5 border-gray-700 bg-gray-800 text-purple-500 focus:ring-purple-500"
                                                                 />
-                                                                <span className="ml-2 text-gray-300">{option}</span>
+                                                                <span className="ml-1.5 text-sm text-gray-300">{option}</span>
                                                             </label>
                                                         ))}
                                                     </div>
@@ -680,31 +679,31 @@ export default function Register() {
 
                                     {/* Step 4: Phone Numbers */}
                                     {currentStep === 4 && (
-                                        <div className="space-y-6">
+                                        <div className="space-y-3 sm:space-y-4">
                                             <div>
-                                                <h2 className="text-2xl font-bold text-white">Phone Numbers</h2>
-                                                <p className="mt-1 text-gray-400">Phone numbers you want to brand (optional - can add later)</p>
+                                                <h2 className="text-lg sm:text-xl font-bold text-white">Phone Numbers</h2>
+                                                <p className="text-sm text-gray-400">Phone numbers you want to brand (optional)</p>
                                             </div>
 
-                                            <div className="grid gap-6">
+                                            <div className="grid gap-3 sm:gap-4">
                                                 <div>
-                                                    <InputLabel htmlFor="primary_phone" value="Primary Outbound Number" className="text-gray-300" />
+                                                    <InputLabel htmlFor="primary_phone" value="Primary Outbound Number" className="text-gray-300 text-sm" />
                                                     <TextInput
                                                         id="primary_phone"
                                                         value={data.primary_phone}
                                                         onChange={(e) => handleFieldChange('primary_phone', e.target.value)}
                                                         onBlur={handleFieldBlur}
-                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white focus:border-purple-500 focus:ring-purple-500"
+                                                        className="mt-1 block w-full border-gray-700 bg-gray-800 text-white text-sm py-2 focus:border-purple-500 focus:ring-purple-500"
                                                         placeholder="+1 (555) 000-0000"
                                                     />
-                                                    <p className="mt-1 text-xs text-gray-500">
+                                                    <p className="mt-0.5 text-xs text-gray-500">
                                                         You can add more numbers after registration
                                                     </p>
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel value="Phone Number Ownership" className="text-gray-300" />
-                                                    <div className="mt-2 space-y-2">
+                                                    <InputLabel value="Phone Number Ownership" className="text-gray-300 text-sm" />
+                                                    <div className="mt-1.5 space-y-1.5">
                                                         {[
                                                             { value: 'own', label: 'I own this number (have LOA/documentation)' },
                                                             { value: 'provider', label: 'Number is from my voice provider' },
@@ -717,35 +716,29 @@ export default function Register() {
                                                                     value={option.value}
                                                                     checked={data.phone_ownership === option.value}
                                                                     onChange={(e) => handleFieldChange('phone_ownership', e.target.value)}
-                                                                    className="h-4 w-4 border-gray-700 bg-gray-800 text-purple-500 focus:ring-purple-500"
+                                                                    className="h-3.5 w-3.5 border-gray-700 bg-gray-800 text-purple-500 focus:ring-purple-500"
                                                                 />
-                                                                <span className="ml-2 text-gray-300">{option.label}</span>
+                                                                <span className="ml-1.5 text-sm text-gray-300">{option.label}</span>
                                                             </label>
                                                         ))}
                                                     </div>
                                                 </div>
 
                                                 {/* Summary */}
-                                                <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-                                                    <h3 className="font-medium text-white">Registration Summary</h3>
-                                                    <dl className="mt-4 space-y-2 text-sm">
+                                                <div className="mt-2 rounded-lg border border-gray-700 bg-gray-800/50 p-3">
+                                                    <h3 className="text-sm font-medium text-white">Registration Summary</h3>
+                                                    <dl className="mt-2 space-y-1 text-xs sm:text-sm">
                                                         <div className="flex justify-between">
                                                             <dt className="text-gray-400">Account</dt>
-                                                            <dd className="text-white">{data.email || 'Not set'}</dd>
+                                                            <dd className="text-white truncate ml-2">{data.email || 'Not set'}</dd>
                                                         </div>
                                                         <div className="flex justify-between">
                                                             <dt className="text-gray-400">Company</dt>
-                                                            <dd className="text-white">{data.company_name || 'Not set'}</dd>
+                                                            <dd className="text-white truncate ml-2">{data.company_name || 'Not set'}</dd>
                                                         </div>
                                                         <div className="flex justify-between">
                                                             <dt className="text-gray-400">Industry</dt>
-                                                            <dd className="text-white">{data.industry || 'Not specified'}</dd>
-                                                        </div>
-                                                        <div className="flex justify-between">
-                                                            <dt className="text-gray-400">Est. Volume</dt>
-                                                            <dd className="text-white">
-                                                                {volumeOptions.find(v => v.value === data.monthly_call_volume)?.label || 'Not specified'}
-                                                            </dd>
+                                                            <dd className="text-white truncate ml-2">{data.industry || 'Not specified'}</dd>
                                                         </div>
                                                     </dl>
                                                 </div>
@@ -754,16 +747,16 @@ export default function Register() {
                                     )}
 
                                     {/* Navigation */}
-                                    <div className="mt-8 flex items-center justify-between border-t border-gray-800 pt-6">
+                                    <div className="mt-4 sm:mt-6 flex items-center justify-between border-t border-gray-800 pt-4">
                                         <div>
                                             {currentStep > 1 && (
                                                 <button
                                                     type="button"
                                                     onClick={prevStep}
                                                     disabled={isSubmitting}
-                                                    className="inline-flex items-center gap-2 text-gray-400 hover:text-white disabled:opacity-50"
+                                                    className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white disabled:opacity-50"
                                                 >
-                                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                                     </svg>
                                                     Back
@@ -771,7 +764,7 @@ export default function Register() {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-3">
                                             {currentStep < 4 && (
                                                 <button
                                                     key={`continue-${currentStep}`}
@@ -781,10 +774,10 @@ export default function Register() {
                                                         nextStep();
                                                     }}
                                                     disabled={!validateStep(currentStep)}
-                                                    className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
                                                 >
                                                     Continue
-                                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                     </svg>
                                                 </button>
@@ -794,20 +787,20 @@ export default function Register() {
                                                     key="submit-account"
                                                     type="submit"
                                                     disabled={isSubmitting || processing || !validateStep(1)}
-                                                    className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
                                                 >
                                                     {(isSubmitting || processing) ? (
                                                         <>
-                                                            <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                            <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
                                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                                             </svg>
-                                                            Creating Account...
+                                                            Creating...
                                                         </>
                                                     ) : (
                                                         <>
                                                             Create Account
-                                                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                             </svg>
                                                         </>
