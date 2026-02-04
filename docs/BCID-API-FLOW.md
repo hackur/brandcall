@@ -67,28 +67,28 @@ sequenceDiagram
     participant TSP as Terminating Carrier
     participant Phone as Consumer Phone
 
-    Note over App,Phone: Phase 1: Brand Registration (One-time)
-    App->>API: POST /brands (name, logo, numbers)
-    API->>API: Validate & store brand
-    API-->>App: 201 Created {brandId}
+    Note over App,Phone: Phase 1 - Brand Registration
+    App->>API: POST /brands
+    API->>API: Validate and store brand
+    API-->>App: 201 Created with brandId
     
-    Note over App,Phone: Phase 2: Pre-Call Intent
+    Note over App,Phone: Phase 2 - Pre-Call Intent
     App->>API: POST /calls/intent
-    Note right of App: {brandId, fromNumber,<br/>toNumber, callReason}
+    Note right of App: brandId, fromNumber<br/>toNumber, callReason
     API->>Sign: Generate PASSporT + RCD
     Sign-->>API: Signed token
-    API-->>App: 200 OK {callToken, expiresAt}
+    API-->>App: 200 OK with callToken
     
-    Note over App,Phone: Phase 3: Voice Call
-    App->>OSP: INVITE (SIP) + callToken
+    Note over App,Phone: Phase 3 - Voice Call
+    App->>OSP: SIP INVITE with callToken
     OSP->>OSP: Attach SHAKEN Identity header
     OSP->>TSP: Route call with signed identity
     TSP->>TSP: Verify SHAKEN signature
     TSP->>Phone: Deliver call + brand display
     
-    Note over App,Phone: Phase 4: Delivery Confirmation
-    TSP-->>API: Webhook: call_delivered
-    API-->>App: Webhook: brand_displayed
+    Note over App,Phone: Phase 4 - Delivery Confirmation
+    TSP-->>API: Webhook call_delivered
+    API-->>App: Webhook brand_displayed
 ```
 
 ### Pattern B: Real-Time Signing (In-Band)
@@ -104,19 +104,19 @@ sequenceDiagram
     participant TSP as Terminating Carrier
     participant Phone as Consumer Phone
 
-    PBX->>NumHub: INVITE (SIP)
-    Note right of PBX: From: +15551234567<br/>To: +15559876543<br/>X-Brand-ID: brand_abc123
+    PBX->>NumHub: INVITE SIP request
+    Note right of PBX: From and To numbers<br/>plus X-Brand-ID header
     
     NumHub->>NumHub: Lookup brand profile
     NumHub->>Sign: Sign call in real-time
     Sign-->>NumHub: PASSporT + RCD attached
     
     NumHub->>TSP: INVITE with Identity header
-    Note right of NumHub: Identity: PASSporT;info=<rcd-url>
+    Note right of NumHub: Identity header contains<br/>signed PASSporT token
     
     TSP->>TSP: Verify attestation level
     TSP->>Phone: Display branded call
-    Phone-->>TSP: 200 OK (answered)
+    Phone-->>TSP: 200 OK answered
     TSP-->>NumHub: Call connected
     NumHub-->>PBX: 200 OK
 ```
@@ -135,7 +135,7 @@ sequenceDiagram
     participant Reg as Brand Registry
 
     Cust->>App: Submit brand application
-    Note right of Cust: Company name, logo,<br/>phone numbers, LOA docs
+    Note right of Cust: Company name and logo<br/>phone numbers and LOA docs
     
     App->>API: POST /brands
     API->>Vet: Initiate vetting
@@ -147,12 +147,12 @@ sequenceDiagram
         Vet-->>API: vetting_approved
         API->>Reg: Register brand in BCID ecosystem
         Reg-->>API: Brand active
-        API-->>App: Webhook: brand.approved
+        API-->>App: Webhook brand.approved
         App-->>Cust: Brand ready for calls
     else Vetting Rejected
-        Vet-->>API: vetting_rejected {reasons}
-        API-->>App: Webhook: brand.rejected
-        App-->>Cust: Please correct: {reasons}
+        Vet-->>API: vetting_rejected with reasons
+        API-->>App: Webhook brand.rejected
+        App-->>Cust: Please correct issues
     end
 ```
 
