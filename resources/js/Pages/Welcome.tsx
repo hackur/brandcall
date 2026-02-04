@@ -68,7 +68,7 @@ export default function Welcome({ auth }: PageProps) {
     const swiperRef = useRef<SwiperType | null>(null);
 
     return (
-        <div className="overflow-x-hidden">
+        <div className="overflow-x-clip">
             <Head title="BrandCall - Branded Caller ID Platform" />
             
             <div className="relative min-h-screen bg-slate-950">
