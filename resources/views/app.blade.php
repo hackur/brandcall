@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Theme initialization (prevent flash) -->
+        <!-- Theme initialization (prevent flash, respect system preference) -->
         <script>
             (function() {
                 var theme = localStorage.getItem('brandcall-theme');
-                if (theme === 'light') {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (theme === 'light') {
                     document.documentElement.classList.remove('dark');
+                } else {
+                    // No preference saved - respect system setting
+                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.classList.add('dark');
+                    }
                 }
             })();
         </script>

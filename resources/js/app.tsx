@@ -25,7 +25,7 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <ThemeProvider defaultTheme="dark">
+            <ThemeProvider>
                 <FontProvider>
                     <App {...props} />
                     {showFontPicker && <FontPicker />}

@@ -14,16 +14,16 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = 'brandcall-theme';
 
 // Get initial theme synchronously to prevent flash
-function getInitialTheme(defaultTheme: Theme): Theme {
-    if (typeof window === 'undefined') return defaultTheme;
+function getInitialTheme(): Theme {
+    if (typeof window === 'undefined') return 'dark';
     
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
     if (savedTheme === 'dark' || savedTheme === 'light') {
         return savedTheme;
     }
     
-    // Default to dark mode (brand preference)
-    return defaultTheme;
+    // No preference saved - respect system setting
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 // Apply theme class immediately (before React hydration)
@@ -38,10 +38,10 @@ function applyThemeClass(theme: Theme) {
     }
 }
 
-export function ThemeProvider({ children, defaultTheme = 'dark' }: { children: ReactNode; defaultTheme?: Theme }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
     // Initialize synchronously to prevent flash
     const [theme, setThemeState] = useState<Theme>(() => {
-        const initial = getInitialTheme(defaultTheme);
+        const initial = getInitialTheme();
         applyThemeClass(initial);
         return initial;
     });
