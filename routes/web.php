@@ -23,6 +23,32 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
+| Marketing Pages (Public Content)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/features', function () {
+    return Inertia::render('Features');
+})->name('features');
+
+Route::get('/solutions', function () {
+    return Inertia::render('Solutions');
+})->name('solutions');
+
+Route::get('/pricing', function () {
+    return Inertia::render('Pricing');
+})->name('pricing');
+
+Route::get('/compliance', function () {
+    return Inertia::render('Compliance');
+})->name('compliance');
+
+Route::get('/guide/branded-calling', function () {
+    return Inertia::render('Guide/BrandedCallingGuide');
+})->name('guide.branded-calling');
+
+/*
+|--------------------------------------------------------------------------
 | Landing Pages (Dynamic, slug-based)
 |--------------------------------------------------------------------------
 */

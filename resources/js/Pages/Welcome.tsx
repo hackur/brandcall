@@ -231,10 +231,10 @@ export default function Welcome({ auth }: PageProps) {
                             </Link>
 
                             <div className="hidden md:flex items-center gap-8">
-                                <a href="#features" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Features</a>
-                                <a href="#solutions" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Solutions</a>
-                                <a href="#compliance" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Compliance</a>
-                                <a href="#" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Pricing</a>
+                                <Link href="/features" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Features</Link>
+                                <Link href="/solutions" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Solutions</Link>
+                                <Link href="/pricing" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Pricing</Link>
+                                <Link href="/guide/branded-calling" className="text-sm font-medium text-theme-tertiary hover:text-theme-primary transition-colors">Guide</Link>
                             </div>
 
                             <div className="flex items-center gap-2 sm:gap-4">
@@ -374,9 +374,9 @@ export default function Welcome({ auth }: PageProps) {
                     <section id="compliance" className="py-12 border-t border-theme-primary">
                         <div className="max-w-7xl mx-auto px-6 sm:px-8">
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                                <p className="text-sm text-theme-muted font-medium">
-                                    Compliance & Certifications
-                                </p>
+                                <Link href="/compliance" className="text-sm text-theme-muted font-medium hover:text-theme-primary transition-colors">
+                                    Compliance & Certifications →
+                                </Link>
                                 <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
                                     {complianceBadges.map((badge, index) => (
                                         <div key={index} className="flex items-center gap-2">
@@ -425,6 +425,16 @@ export default function Welcome({ auth }: PageProps) {
                                     </div>
                                 ))}
                             </div>
+                            
+                            <div className="mt-10 text-center">
+                                <Link 
+                                    href="/features"
+                                    className="inline-flex items-center gap-2 text-brand-500 hover:text-brand-400 font-medium transition-colors"
+                                >
+                                    View all features
+                                    <div className="h-4 w-4">{Icons.arrow}</div>
+                                </Link>
+                            </div>
                         </div>
                     </section>
 
@@ -458,6 +468,16 @@ export default function Welcome({ auth }: PageProps) {
                                         </p>
                                     </div>
                                 ))}
+                            </div>
+                            
+                            <div className="mt-10 text-center">
+                                <Link 
+                                    href="/solutions"
+                                    className="inline-flex items-center gap-2 text-brand-500 hover:text-brand-400 font-medium transition-colors"
+                                >
+                                    Explore industry solutions
+                                    <div className="h-4 w-4">{Icons.arrow}</div>
+                                </Link>
                             </div>
                         </div>
                     </section>
@@ -506,19 +526,19 @@ export default function Welcome({ auth }: PageProps) {
                                 <div>
                                     <h4 className="text-sm font-semibold text-theme-primary mb-4">Product</h4>
                                     <ul className="space-y-3">
-                                        <li><a href="#features" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Features</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Pricing</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">API Documentation</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Integrations</a></li>
+                                        <li><Link href="/features" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Features</Link></li>
+                                        <li><Link href="/pricing" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Pricing</Link></li>
+                                        <li><Link href="/solutions" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Solutions</Link></li>
+                                        <li><Link href="/guide/branded-calling" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">BCID Guide</Link></li>
                                     </ul>
                                 </div>
                                 <div>
-                                    <h4 className="text-sm font-semibold text-theme-primary mb-4">Company</h4>
+                                    <h4 className="text-sm font-semibold text-theme-primary mb-4">Resources</h4>
                                     <ul className="space-y-3">
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">About</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Blog</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Careers</a></li>
-                                        <li><a href="mailto:sales@brandcall.io" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Contact</a></li>
+                                        <li><Link href="/guide/branded-calling" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">What is BCID?</Link></li>
+                                        <li><Link href="/compliance" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Compliance</Link></li>
+                                        <li><a href="mailto:support@brandcall.io" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Support</a></li>
+                                        <li><a href="mailto:sales@brandcall.io" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Contact Sales</a></li>
                                     </ul>
                                 </div>
                                 <div>
@@ -526,8 +546,8 @@ export default function Welcome({ auth }: PageProps) {
                                     <ul className="space-y-3">
                                         <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Privacy Policy</a></li>
                                         <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Terms of Service</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Security</a></li>
-                                        <li><a href="#" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Compliance</a></li>
+                                        <li><Link href="/compliance" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Security</Link></li>
+                                        <li><Link href="/compliance" className="text-sm text-theme-tertiary hover:text-theme-primary transition-colors">Compliance</Link></li>
                                     </ul>
                                 </div>
                             </div>
