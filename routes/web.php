@@ -21,6 +21,11 @@ Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
+Route::get('/features', fn() => Inertia::render('Features'))->name('features');
+Route::get('/solutions', fn() => Inertia::render('Solutions'))->name('solutions');
+Route::get('/pricing', fn() => Inertia::render('Pricing'))->name('pricing');
+Route::get('/compliance', fn() => Inertia::render('Compliance'))->name('compliance');
+
 /*
 |--------------------------------------------------------------------------
 | Marketing Pages (Public Content)
