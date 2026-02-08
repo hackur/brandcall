@@ -55,6 +55,15 @@ Route::get('/guide/branded-calling', function () {
 Route::get('/faq', fn () => Inertia::render('Faq'))->name('faq');
 Route::get('/glossary', fn () => Inertia::render('Glossary'))->name('glossary');
 
+Route::get('/what-is-branded-caller-id', fn () => Inertia::render('WhatIsBrandedCallerId'))->name('what-is-branded-caller-id');
+Route::get('/spam-check', fn () => Inertia::render('SpamCheck'))->name('spam-check');
+Route::get('/stir-shaken-explained', fn () => Inertia::render('StirShakenExplained'))->name('stir-shaken-explained');
+
+Route::get('/solutions/call-centers', fn () => Inertia::render('Solutions/CallCenters'))->name('solutions.call-centers');
+Route::get('/solutions/sales-teams', fn () => Inertia::render('Solutions/SalesTeams'))->name('solutions.sales-teams');
+Route::get('/solutions/healthcare', fn () => Inertia::render('Solutions/Healthcare'))->name('solutions.healthcare');
+Route::get('/solutions/financial-services', fn () => Inertia::render('Solutions/FinancialServices'))->name('solutions.financial-services');
+
 /*
 |--------------------------------------------------------------------------
 | Landing Pages (Dynamic, slug-based)

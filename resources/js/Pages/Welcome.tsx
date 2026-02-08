@@ -13,9 +13,9 @@ import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 
 const headlines = [
-    { title: 'Branded Caller ID', subtitle: 'That Builds Trust' },
-    { title: 'Stop Getting Ignored', subtitle: 'Start Getting Answered' },
-    { title: '30% Higher Answer Rates', subtitle: 'With Every Call' },
+    { title: 'Branded Caller ID', subtitle: 'In Minutes, Not Weeks' },
+    { title: '95% Ignore Unknown Numbers', subtitle: 'Don\'t Be One of Them' },
+    { title: '48%+ Higher Answer Rates', subtitle: 'With Every Call' },
     { title: 'Your Brand, Your Identity', subtitle: 'On Every Outbound Call' },
 ];
 
@@ -110,10 +110,10 @@ const Icons = {
 };
 
 const stats = [
+    { value: '95%', label: 'Ignore Unknown Numbers' },
+    { value: '48%+', label: 'Answer Rate Improvement' },
+    { value: 'Minutes', label: 'Setup Time, Not Weeks' },
     { value: '99.9%', label: 'Uptime SLA' },
-    { value: '500+', label: 'Enterprise Clients' },
-    { value: '50M+', label: 'Calls Branded Monthly' },
-    { value: '30%', label: 'Higher Answer Rates' },
 ];
 
 const features = [

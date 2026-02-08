@@ -44,7 +44,9 @@ const footerLinks = {
         { href: '/guide/branded-calling', label: 'BCID Guide' },
     ],
     resources: [
-        { href: '/guide/branded-calling', label: 'What is BCID?' },
+        { href: '/what-is-branded-caller-id', label: 'What is Branded Caller ID?' },
+        { href: '/stir-shaken-explained', label: 'STIR/SHAKEN Guide' },
+        { href: '/spam-check', label: 'Spam Check' },
         { href: '/faq', label: 'FAQ' },
         { href: '/glossary', label: 'Glossary' },
         { href: '/compliance', label: 'Compliance' },
