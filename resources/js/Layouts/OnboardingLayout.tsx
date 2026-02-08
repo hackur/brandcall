@@ -1,4 +1,5 @@
 import ThemeToggle from '@/Components/ThemeToggle';
+import { ToastProvider } from '@/Components/FlashMessages';
 import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren, useState } from 'react';
 
@@ -68,6 +69,7 @@ export default function OnboardingLayout({ children }: PropsWithChildren) {
 
     return (
         <div className="min-h-screen bg-theme-primary transition-colors duration-300">
+            <ToastProvider />
             {/* Mobile sidebar backdrop */}
             {sidebarOpen && (
                 <div 

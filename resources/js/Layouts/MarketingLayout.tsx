@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren, useState, useEffect } from 'react';
 import { PageProps } from '@/types';
 import ThemeToggle from '@/Components/ThemeToggle';
+import { ToastProvider } from '@/Components/FlashMessages';
 
 // Custom SVG Icons
 const Icons = {
@@ -32,6 +33,7 @@ const navLinks = [
     { href: '/solutions', label: 'Solutions' },
     { href: '/pricing', label: 'Pricing' },
     { href: '/guide/branded-calling', label: 'Guide' },
+    { href: '/faq', label: 'FAQ' },
 ];
 
 const footerLinks = {
@@ -43,9 +45,10 @@ const footerLinks = {
     ],
     resources: [
         { href: '/guide/branded-calling', label: 'What is BCID?' },
+        { href: '/faq', label: 'FAQ' },
+        { href: '/glossary', label: 'Glossary' },
         { href: '/compliance', label: 'Compliance' },
         { href: 'mailto:support@brandcall.io', label: 'Support', external: true },
-        { href: 'mailto:sales@brandcall.io', label: 'Contact Sales', external: true },
     ],
     legal: [
         { href: '#', label: 'Privacy Policy' },
@@ -89,6 +92,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProps) {
 
     return (
         <div className="min-h-screen bg-theme-primary">
+            <ToastProvider />
             {/* Navigation */}
             <nav 
                 className={`fixed top-0 left-0 right-0 z-50 px-5 sm:px-6 py-3 sm:py-4 bg-theme-primary/95 backdrop-blur-lg border-b border-theme-primary transition-all duration-300 ${
